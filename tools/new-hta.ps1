@@ -1,4 +1,4 @@
-# 创建新的 HTA 应用目录结构
+﻿# 创建新的 HTA 应用目录结构
 # 用法: .\tools\new-hta.ps1 <应用名称>
 
 param(
@@ -52,7 +52,10 @@ $htaContent = @"
         SYSMENU="yes"
         VERSION="1.0"
     />
-    <script language="javascript" src="../library/vue.js"></script>
+    <script language="javascript" src="../vue/vue.js"></script>
+    <script language="javascript" src="../components/js/com.js"></script>
+    <script language="javascript" src="../components/js/common.js"></script>
+    <link rel="stylesheet" type="text/css" href="../components/css/common.css" />
     <link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
 <body>
@@ -75,11 +78,14 @@ var w = 800, h = 600;
 window.resizeTo(w, h);
 window.moveTo((screen.availWidth - w) / 2, (screen.availHeight - h) / 2);
 
-var shell = new ActiveXObject("WScript.Shell");
-var fso = new ActiveXObject("Scripting.FileSystemObject");
+var writeLog = HTAComponents.writeLog;
+var sleep = HTAComponents.sleep;
+
+Vue.directive('focus', HTAComponents.FocusDirective);
 
 new Vue({
     el: '#app',
+    mixins: [HTAComponents.ToastMixin, HTAComponents.LoadingMixin],
     data: {
     },
     methods: {
@@ -87,13 +93,38 @@ new Vue({
 });
 "@
 
+$dtsContent = @"
+/**
+ * $AppName 应用类型定义
+ * 用于编辑器智能提示 (VS Code / WebStorm)
+ * 运行时无效，仅作为开发参考
+ */
+
+interface ${AppName}Data {
+    // 应用数据属性
+    loading: boolean;
+    toastVisible: boolean;
+    toastMessage: string;
+    toastTimer: number | null;
+}
+
+interface ${AppName}Methods {
+    showToast(msg: string, duration?: number): void;
+}
+"@
+
 # 写入文件 (UTF-8 with BOM)
 [System.IO.File]::WriteAllText((Join-Path $appDir "main.hta"), $htaContent, $utf8WithBom)
 [System.IO.File]::WriteAllText((Join-Path $cssDir "style.css"), $cssContent, $utf8WithBom)
 [System.IO.File]::WriteAllText((Join-Path $jsDir "app.js"), $jsContent, $utf8WithBom)
+
+# 写入 .d.ts 类型定义文件
+$dtsPath = Join-Path $projectRoot "types" "$AppName.d.ts"
+[System.IO.File]::WriteAllText($dtsPath, $dtsContent, $utf8WithBom)
 
 Write-Host "Created HTA app: $appDir" -ForegroundColor Green
 Write-Host "  main.hta" -ForegroundColor Gray
 Write-Host "  css/style.css" -ForegroundColor Gray
 Write-Host "  js/app.js" -ForegroundColor Gray
 Write-Host "  logs/" -ForegroundColor Gray
+Write-Host "Created type definition: types/$AppName.d.ts" -ForegroundColor Green

@@ -1,33 +1,15 @@
-var w = 780, h = 520;
+﻿var w = 780, h = 520;
 window.resizeTo(w, h);
 window.moveTo((screen.availWidth - w) / 2, (screen.availHeight - h) / 2);
 
-var shell = new ActiveXObject("WScript.Shell");
-var envUser = shell.Environment("User");
+var writeLog = HTAComponents.writeLog;
+var envUser = HTAComponents.getEnvVars("User");
 
-function writeLog(msg) {
-    try {
-        var fso = new ActiveXObject("Scripting.FileSystemObject");
-        var basePath = unescape(location.href.replace("file:///", "").replace(/\//g, "\\"));
-        var logDir = fso.GetParentFolderName(basePath) + "\\logs";
-        if (!fso.FolderExists(logDir)) fso.CreateFolder(logDir);
-        var ts = fso.OpenTextFile(logDir + "\\error.log", 8, true);
-        var now = new Date();
-        function p(n) { return n < 10 ? "0" + n : "" + n; }
-        ts.WriteLine(now.getFullYear() + "-" + p(now.getMonth()+1) + "-" + p(now.getDate()) + "T" + p(now.getHours()) + ":" + p(now.getMinutes()) + ":" + p(now.getSeconds()) + " " + msg);
-        ts.Close();
-    } catch(e) {}
-}
-
-Vue.directive('focus', {
-    inserted: function (el) {
-        el.focus();
-        el.select();
-    }
-});
+Vue.directive('focus', HTAComponents.FocusDirective);
 
 new Vue({
     el: '#app',
+    mixins: [HTAComponents.ToastMixin],
     data: {
         envList: [],
         editingIndex: -1,
@@ -35,9 +17,6 @@ new Vue({
         showAddModal: false,
         newVar: { name: '', value: '' },
         originalList: [],
-        toastVisible: false,
-        toastMessage: '',
-        toastTimer: null,
         saving: false
     },
     computed: {
@@ -97,8 +76,8 @@ new Vue({
                     } catch(ex) {}
                 }
 
-                loadFromEnv(shell.Environment("System"), false);
-                loadFromEnv(shell.Environment("User"), true);
+                loadFromEnv(HTAComponents.getEnvVars("System"), false);
+                loadFromEnv(envUser, true);
 
                 var list = [];
                 for (var key in map) {
@@ -204,13 +183,6 @@ new Vue({
         refreshList: function() {
             this.loadEnvVars();
             this.showToast("已刷新");
-        },
-        showToast: function(msg) {
-            var self = this;
-            this.toastMessage = msg;
-            this.toastVisible = true;
-            if (this.toastTimer) clearTimeout(this.toastTimer);
-            this.toastTimer = setTimeout(function() { self.toastVisible = false; }, 2000);
         }
     }
 });

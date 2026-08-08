@@ -2,52 +2,16 @@
 window.resizeTo(w, h);
 window.moveTo((screen.availWidth - w) / 2, (screen.availHeight - h) / 2);
 
-var shell = new ActiveXObject("WScript.Shell");
-var fso = new ActiveXObject("Scripting.FileSystemObject");
-
-function sleep(ms) {
-    var start = new Date().getTime();
-    while (new Date().getTime() - start < ms) {}
-}
-
-function writeLog(msg) {
-    try {
-        var basePath = unescape(location.href.replace("file:///", "").replace(/\//g, "\\"));
-        var logDir = fso.GetParentFolderName(basePath) + "\\logs";
-        if (!fso.FolderExists(logDir)) fso.CreateFolder(logDir);
-        var ts = fso.OpenTextFile(logDir + "\\error.log", 8, true);
-        var now = new Date();
-        function p(n) { return n < 10 ? "0" + n : "" + n; }
-        ts.WriteLine(now.getFullYear() + "-" + p(now.getMonth()+1) + "-" + p(now.getDate()) + "T" + p(now.getHours()) + ":" + p(now.getMinutes()) + ":" + p(now.getSeconds()) + " " + msg);
-        ts.Close();
-    } catch(e) {}
-}
+var sleep = HTAComponents.sleep;
+var writeLog = HTAComponents.writeLog;
 
 function runGitSync(args, cwd) {
-    try {
-        var cmd = 'cmd /c git ' + args + ' 2>&1';
-        if (cwd) {
-            shell.CurrentDirectory = cwd;
-        }
-        var exec = shell.Exec(cmd);
-        var output = "";
-        while (!exec.Status) {
-            sleep(100);
-        }
-        if (exec.StdOut.AtEndOfStream === false) {
-            output = exec.StdOut.ReadAll();
-        }
-        if (exec.StdErr.AtEndOfStream === false) {
-            output += exec.StdErr.ReadAll();
-        }
-        return output;
-    } catch(e) {
-        return "error: " + e.message;
-    }
+    return HTAComponents.runCmdSync('git ' + args, cwd);
 }
 
 new Vue({
     el: '#app',
+    mixins: [HTAComponents.ToastMixin, HTAComponents.LoadingMixin],
     data: {
         currentRepo: "",
         recentRepos: [],
@@ -72,11 +36,7 @@ new Vue({
         selectedCommitFiles: [],
         commitFilesExpanded: true,
         consoleOutput: [],
-        consoleCmd: "",
-        loading: false,
-        toastVisible: false,
-        toastMessage: "",
-        toastTimer: null
+        consoleCmd: ""
     },
     computed: {
         selectedUnstaged: function() {
@@ -86,28 +46,28 @@ new Vue({
             return this.stagedFiles.filter(function(f) { return f._selected; });
         }
     },
-        mounted: function() {
-            this.loadRecentRepos();
-            var self = this;
-            document.addEventListener('click', function(e) {
-                var target = e.target;
-                var inToolbar = false;
-                var el = target;
-                while (el && el !== document.body) {
-                    if (el.className && typeof el.className === 'string') {
-                        if (el.className.indexOf('toolbar-left') > -1 || el.className.indexOf('toolbar-right') > -1) {
-                            inToolbar = true;
-                            break;
-                        }
+    mounted: function() {
+        this.loadRecentRepos();
+        var self = this;
+        document.addEventListener('click', function(e) {
+            var target = e.target;
+            var inToolbar = false;
+            var el = target;
+            while (el && el !== document.body) {
+                if (el.className && typeof el.className === 'string') {
+                    if (el.className.indexOf('toolbar-left') > -1 || el.className.indexOf('toolbar-right') > -1) {
+                        inToolbar = true;
+                        break;
                     }
-                    el = el.parentNode;
                 }
-                if (!inToolbar) {
-                    self.showRepoMenu = false;
-                    self.showBranchMenu = false;
-                }
-            });
-        },
+                el = el.parentNode;
+            }
+            if (!inToolbar) {
+                self.showRepoMenu = false;
+                self.showBranchMenu = false;
+            }
+        });
+    },
     watch: {
         currentRepo: function(val) {
             if (val) {
@@ -125,7 +85,7 @@ new Vue({
         loadRecentRepos: function() {
             try {
                 var regPath = "HKCU\\Software\\GitManager\\RecentRepos";
-                var val = shell.RegRead(regPath);
+                var val = HTAComponents.readReg(regPath);
                 this.recentRepos = val ? val.split(";") : [];
             } catch(e) {
                 this.recentRepos = [];
@@ -137,16 +97,15 @@ new Vue({
                 list.unshift(repo);
                 if (list.length > 10) list = list.slice(0, 10);
                 this.recentRepos = list;
-                shell.RegWrite("HKCU\\Software\\GitManager\\RecentRepos", list.join(";"));
+                HTAComponents.writeReg("HKCU\\Software\\GitManager\\RecentRepos", list.join(";"));
             } catch(e) {}
         },
         browseRepo: function() {
+            this.showRepoMenu = false;
             try {
-                var shellApp = new ActiveXObject("Shell.Application");
-                var folder = shellApp.BrowseForFolder(0, "选择Git仓库目录", 0, 0);
-                if (folder) {
-                    var path = folder.Self.Path;
-                    if (fso.FolderExists(path + "\\.git")) {
+                var path = HTAComponents.browseForFolder("选择Git仓库目录");
+                if (path) {
+                    if (HTAComponents.folderExists(path + "\\.git")) {
                         this.openRepo(path);
                     } else {
                         this.showToast("所选目录不是Git仓库");
@@ -155,19 +114,33 @@ new Vue({
             } catch(e) {
                 this.showToast("取消选择");
             }
-            this.showRepoMenu = false;
         },
         openRepo: function(repo) {
+            if (!HTAComponents.folderExists(repo + "\\.git")) {
+                this.showToast("所选目录不是Git仓库");
+                return;
+            }
+            this.showRepoMenu = false;
             this.currentRepo = repo;
             this.saveRecentRepo(repo);
-            this.showRepoMenu = false;
             this.consoleOutput = [];
             this.logToConsole("Opened: " + repo);
         },
         refreshAll: function() {
-            this.loadBranches();
-            this.refreshStatus();
-            this.loadLog();
+            var self = this;
+            this.loading = true;
+            this.showToast("正在加载仓库...");
+            setTimeout(function() {
+                self.loadBranches();
+                setTimeout(function() {
+                    self.refreshStatus();
+                    setTimeout(function() {
+                        self.loadLog();
+                        self.loading = false;
+                        self.showToast("仓库加载完成");
+                    }, 50);
+                }, 50);
+            }, 50);
         },
         loadBranches: function() {
             if (!this.currentRepo) return;
@@ -495,13 +468,6 @@ new Vue({
                 var el = document.querySelector('.console-output');
                 if (el) el.scrollTop = el.scrollHeight;
             });
-        },
-        showToast: function(msg) {
-            var self = this;
-            this.toastMessage = msg;
-            this.toastVisible = true;
-            if (this.toastTimer) clearTimeout(this.toastTimer);
-            this.toastTimer = setTimeout(function() { self.toastVisible = false; }, 3000);
         }
     }
 });

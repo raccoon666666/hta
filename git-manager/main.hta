@@ -11,7 +11,6 @@
         BORDERSTYLE="normal"
         CAPTION="yes"
         CONTEXTMENU="no"
-        ICON="app.ico"
         INNERBORDER="no"
         MAXIMIZEBUTTON="yes"
         MINIMIZEBUTTON="yes"
@@ -22,7 +21,10 @@
         SYSMENU="yes"
         VERSION="1.0"
     />
-    <script language="javascript" src="../library/vue.js"></script>
+    <script language="javascript" src="../vue/vue.js"></script>
+    <script language="javascript" src="../components/js/com.js"></script>
+    <script language="javascript" src="../components/js/common.js"></script>
+    <link rel="stylesheet" type="text/css" href="../components/css/common.css" />
     <link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
 <body>
@@ -35,7 +37,7 @@
                     <span class="repo-path">{{ currentRepo || '选择仓库...' }}</span>
                     <span class="dropdown-arrow">&#x25BC;</span>
                 </div>
-                <div class="repo-menu" v-if="showRepoMenu" @click.stop>
+                <div class="repo-menu" v-show="showRepoMenu" @click.stop>
                     <div class="repo-menu-item" v-for="repo in recentRepos" :key="repo" @click="openRepo(repo)">{{ repo }}</div>
                     <div class="repo-menu-sep"></div>
                     <div class="repo-menu-item" @click="browseRepo()">&#x2026; 浏览...</div>
@@ -78,7 +80,7 @@
         </div>
 
         <!-- Changes Tab -->
-        <div class="tab-content" v-if="activeTab === 'changes'">
+        <div class="tab-content" v-show="activeTab === 'changes'">
             <div class="changes-toolbar">
                 <button class="op-btn" @click="stageAll()" title="Stage All">&#x2713; 暂存全部</button>
                 <button class="op-btn" @click="unstageAll()" title="Unstage All">&#x2717; 取消暂存全部</button>
@@ -143,7 +145,7 @@
         </div>
 
         <!-- Log Tab -->
-        <div class="tab-content" v-if="activeTab === 'log'">
+        <div class="tab-content" v-show="activeTab === 'log'">
             <div class="log-toolbar">
                 <button class="op-btn" @click="loadLog()">&#x21BB; 刷新</button>
                 <input class="log-search" v-model="logSearch" placeholder="搜索提交信息、作者、哈希..." @input="filterLog()" />
@@ -205,7 +207,7 @@
         </div>
 
         <!-- Console Tab -->
-        <div class="tab-content console-tab" v-if="activeTab === 'console'">
+        <div class="tab-content console-tab" v-show="activeTab === 'console'">
             <div class="console-toolbar">
                 <button class="op-btn" @click="consoleOutput = []">&#x2716; 清空</button>
                 <button class="op-btn" @click="refreshStatus()">&#x21BB; 刷新状态</button>
@@ -214,7 +216,7 @@
                 <span class="console-prompt">git </span>
                 <input class="console-input" v-model="consoleCmd" @keyup.enter="executeCmd()" placeholder="输入命令 (不需要git前缀)" />
             </div>
-            <div class="console-output">
+            <div class="console-output" id="consoleOutput">
                 <div class="console-line" v-for="(line, i) in consoleOutput" :key="i" :class="{ 'console-error': line.startsWith('error') || line.startsWith('fatal') }">{{ line }}</div>
             </div>
         </div>
