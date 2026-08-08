@@ -1,0 +1,233 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Git Manager</title>
+    <HTA:APPLICATION
+        ID="GitManager"
+        APPLICATIONNAME="Git Manager"
+        BORDER="dialog"
+        BORDERSTYLE="normal"
+        CAPTION="yes"
+        CONTEXTMENU="no"
+        ICON="app.ico"
+        INNERBORDER="no"
+        MAXIMIZEBUTTON="yes"
+        MINIMIZEBUTTON="yes"
+        NAVIGABLE="no"
+        SCROLL="no"
+        SELECTION="no"
+        SINGLEINSTANCE="yes"
+        SYSMENU="yes"
+        VERSION="1.0"
+    />
+    <script language="javascript" src="../library/vue.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+</head>
+<body>
+    <div id="app">
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <div class="repo-selector" @click.stop="showRepoMenu = !showRepoMenu">
+                    <span class="repo-icon">&#x1F4C2;</span>
+                    <span class="repo-path">{{ currentRepo || '选择仓库...' }}</span>
+                    <span class="dropdown-arrow">&#x25BC;</span>
+                </div>
+                <div class="repo-menu" v-if="showRepoMenu" @click.stop>
+                    <div class="repo-menu-item" v-for="repo in recentRepos" :key="repo" @click="openRepo(repo)">{{ repo }}</div>
+                    <div class="repo-menu-sep"></div>
+                    <div class="repo-menu-item" @click="browseRepo()">&#x2026; 浏览...</div>
+                </div>
+            </div>
+            <div class="toolbar-right">
+                <button class="toolbar-btn" @click="gitFetch()" title="Fetch">&#x21BB; Fetch</button>
+                <button class="toolbar-btn" @click="gitPull()" title="Pull">&#x2193; Pull</button>
+                <button class="toolbar-btn" @click="gitPush()" title="Push">&#x2191; Push</button>
+                <div class="toolbar-sep"></div>
+                <button class="toolbar-btn" @click.stop="showBranchMenu = !showBranchMenu" title="Branches">
+                    <span class="branch-label">{{ currentBranch || 'branch' }}</span> &#x25BC;
+                </button>
+                <div class="branch-menu" v-if="showBranchMenu" @click.stop>
+                    <div class="menu-header">本地分支</div>
+                    <div class="repo-menu-item" v-for="b in localBranches" :key="b" @click="checkoutBranch(b)">
+                        <span class="branch-icon" v-if="b === currentBranch">&#x2713;</span>
+                        <span class="branch-icon" v-else></span>
+                        {{ b }}
+                    </div>
+                    <div class="repo-menu-sep" v-if="remoteBranches.length > 0"></div>
+                    <div class="menu-header" v-if="remoteBranches.length > 0">远程分支</div>
+                    <div class="repo-menu-item" v-for="b in remoteBranches" :key="b" @click="checkoutRemoteBranch(b)">
+                        <span class="branch-icon">&#x21BB;</span>
+                        {{ b }}
+                    </div>
+                    <div class="repo-menu-sep"></div>
+                    <div class="repo-menu-item" @click="createBranch()">&#x2795; 新建分支</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Tabs -->
+        <div class="tab-header">
+            <div class="tab" :class="{ active: activeTab === 'changes' }" @click="activeTab = 'changes'">
+                本地更改 <span class="badge" v-if="changedFiles.length > 0">{{ changedFiles.length }}</span>
+            </div>
+            <div class="tab" :class="{ active: activeTab === 'log' }" @click="activeTab = 'log'">日志</div>
+            <div class="tab" :class="{ active: activeTab === 'console' }" @click="activeTab = 'console'">终端</div>
+        </div>
+
+        <!-- Changes Tab -->
+        <div class="tab-content" v-if="activeTab === 'changes'">
+            <div class="changes-toolbar">
+                <button class="op-btn" @click="stageAll()" title="Stage All">&#x2713; 暂存全部</button>
+                <button class="op-btn" @click="unstageAll()" title="Unstage All">&#x2717; 取消暂存全部</button>
+                <button class="op-btn" @click="stageSelected()" :disabled="selectedUnstaged.length === 0">&#x2713; 暂存</button>
+                <button class="op-btn" @click="unstageSelected()" :disabled="selectedStaged.length === 0">&#x2717; 取消暂存</button>
+                <button class="op-btn" @click="discardSelected()" :disabled="selectedUnstaged.length === 0">&#x2716; 撤销</button>
+                <button class="op-btn" @click="refreshStatus()">&#x21BB; 刷新</button>
+                <div class="commit-section">
+                    <textarea class="commit-msg" v-model="commitMessage" placeholder="提交说明..." rows="2"></textarea>
+                    <button class="commit-btn" @click="gitCommit()" :disabled="stagedFiles.length === 0 || !commitMessage.trim()">提交</button>
+                    <button class="commit-push-btn" @click="gitCommitPush()" :disabled="stagedFiles.length === 0 || !commitMessage.trim()">提交并推送</button>
+                </div>
+            </div>
+
+            <div class="changes-container">
+                <!-- Staged -->
+                <div class="changes-group" v-if="stagedFiles.length > 0">
+                    <div class="group-header">
+                        <span class="expand-icon" @click="stagedExpanded = !stagedExpanded">{{ stagedExpanded ? '▼' : '▶' }}</span>
+                        <input type="checkbox" :checked="stagedFiles.length > 0 && stagedFiles.every(function(f){return f._selected;})" @change="toggleAllStaged($event)" />
+                        已暂存 ({{ stagedFiles.length }})
+                    </div>
+                    <div v-if="stagedExpanded">
+                        <div class="file-item" v-for="file in stagedFiles" :key="file.path" :class="{ selected: file._selected }" @click="toggleFileSelect(file, $event)">
+                            <input type="checkbox" :checked="file._selected" @click.stop @change="toggleFileSelect(file, $event)" />
+                            <span class="file-status staged">{{ file.status }}</span>
+                            <span class="file-path">{{ file.path }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unstaged -->
+                <div class="changes-group" v-if="unstagedFiles.length > 0">
+                    <div class="group-header">
+                        <span class="expand-icon" @click="unstagedExpanded = !unstagedExpanded">{{ unstagedExpanded ? '▼' : '▶' }}</span>
+                        <input type="checkbox" :checked="unstagedFiles.length > 0 && unstagedFiles.every(function(f){return f._selected;})" @change="toggleAllUnstaged($event)" />
+                        未暂存 ({{ unstagedFiles.length }})
+                    </div>
+                    <div v-if="unstagedExpanded">
+                        <div class="file-item" v-for="file in unstagedFiles" :key="file.path" :class="{ selected: file._selected }" @click="toggleFileSelect(file, $event)">
+                            <input type="checkbox" :checked="file._selected" @click.stop @change="toggleFileSelect(file, $event)" />
+                            <span class="file-status unstaged">{{ file.status }}</span>
+                            <span class="file-path">{{ file.path }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="no-changes" v-if="stagedFiles.length === 0 && unstagedFiles.length === 0">
+                    <div class="no-changes-icon">&#x2713;</div>
+                    <div>工作区是干净的，没有要提交的更改</div>
+                </div>
+            </div>
+
+            <!-- Diff Panel -->
+            <div class="diff-panel" v-if="diffContent">
+                <div class="diff-header">
+                    <span class="diff-file-name">{{ diffFileName }}</span>
+                    <button class="close-btn" @click="diffContent = ''">&#x2716;</button>
+                </div>
+                <pre class="diff-content">{{ diffContent }}</pre>
+            </div>
+        </div>
+
+        <!-- Log Tab -->
+        <div class="tab-content" v-if="activeTab === 'log'">
+            <div class="log-toolbar">
+                <button class="op-btn" @click="loadLog()">&#x21BB; 刷新</button>
+                <input class="log-search" v-model="logSearch" placeholder="搜索提交信息、作者、哈希..." @input="filterLog()" />
+                <span class="log-count">{{ filteredCommits.length }} / {{ commits.length }} 条提交</span>
+            </div>
+            <div class="log-container">
+                <div class="log-item" v-for="commit in filteredCommits" :key="commit.hash" @click="selectCommit(commit)" :class="{ selected: selectedCommit === commit }">
+                    <div class="log-graph">
+                        <div class="graph-dot"></div>
+                        <div class="graph-line"></div>
+                    </div>
+                    <div class="log-info">
+                        <div class="log-message">{{ commit.message }}</div>
+                        <div class="log-meta">
+                            <span class="log-hash">{{ commit.hash.substring(0, 7) }}</span>
+                            <span class="log-author">{{ commit.author }}</span>
+                            <span class="log-date">{{ commit.date }}</span>
+                        </div>
+                        <div class="log-branches" v-if="commit.branches && commit.branches.length > 0">
+                            <span class="branch-tag" v-for="b in commit.branches" :key="b">{{ b }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Commit Detail -->
+            <div class="commit-detail" v-if="selectedCommit">
+                <div class="detail-header">
+                    <span>{{ selectedCommit.message }}</span>
+                    <button class="close-btn" @click="selectedCommit = null">&#x2716;</button>
+                </div>
+                <div class="detail-body">
+                    <div class="detail-row">
+                        <span class="detail-label">哈希:</span>
+                        <span class="detail-value">{{ selectedCommit.hash }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">作者:</span>
+                        <span class="detail-value">{{ selectedCommit.author }} &lt;{{ selectedCommit.email }}&gt;</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">日期:</span>
+                        <span class="detail-value">{{ selectedCommit.date }}</span>
+                    </div>
+                    <div class="detail-files" v-if="selectedCommitFiles.length > 0">
+                        <div class="detail-files-header" @click="commitFilesExpanded = !commitFilesExpanded">
+                            <span class="expand-icon">{{ commitFilesExpanded ? '▼' : '▶' }}</span>
+                            更改的文件 ({{ selectedCommitFiles.length }})
+                        </div>
+                        <div v-if="commitFilesExpanded">
+                            <div class="file-item" v-for="file in selectedCommitFiles" :key="file.path" @click="showCommitDiff(file)">
+                                <span class="file-status" :class="file.type">{{ file.type }}</span>
+                                <span class="file-path">{{ file.path }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Console Tab -->
+        <div class="tab-content console-tab" v-if="activeTab === 'console'">
+            <div class="console-toolbar">
+                <button class="op-btn" @click="consoleOutput = []">&#x2716; 清空</button>
+                <button class="op-btn" @click="refreshStatus()">&#x21BB; 刷新状态</button>
+            </div>
+            <div class="console-input-area">
+                <span class="console-prompt">git </span>
+                <input class="console-input" v-model="consoleCmd" @keyup.enter="executeCmd()" placeholder="输入命令 (不需要git前缀)" />
+            </div>
+            <div class="console-output">
+                <div class="console-line" v-for="(line, i) in consoleOutput" :key="i" :class="{ 'console-error': line.startsWith('error') || line.startsWith('fatal') }">{{ line }}</div>
+            </div>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" :class="{ show: toastVisible }">{{ toastMessage }}</div>
+
+        <!-- Loading overlay -->
+        <div class="loading-overlay" v-if="loading">
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+
+    <script language="javascript" src="js/app.js"></script>
+</body>
+</html>

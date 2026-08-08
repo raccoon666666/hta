@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>环境变量管理</title>
+    <HTA:APPLICATION
+        ID="EnvManager"
+        APPLICATIONNAME="环境变量管理"
+        BORDER="dialog"
+        BORDERSTYLE="normal"
+        CAPTION="yes"
+        CONTEXTMENU="no"
+        ICON="app.ico"
+        INNERBORDER="no"
+        MAXIMIZEBUTTON="no"
+        MINIMIZEBUTTON="yes"
+        NAVIGABLE="no"
+        SCROLL="no"
+        SELECTION="no"
+        SINGLEINSTANCE="yes"
+        SYSMENU="yes"
+        VERSION="1.0"
+    />
+    <script language="javascript" src="../library/vue.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+</head>
+<body>
+    <div id="app">
+        <div class="toolbar">
+            <button class="btn-save" @click="saveChanges" :disabled="!hasChanges || saving">{{ saving ? '保存中...' : '保存' }}</button>
+            <button class="btn-delete" @click="confirmDelete" :disabled="selectedCount === 0">删除选中</button>
+            <button class="btn-add" @click="showAddModal = true">新增</button>
+            <button class="btn-refresh" @click="refreshList">刷新</button>
+            <span class="toolbar-stat">
+                <span>共 <strong>{{ envList.length }}</strong> 项 | 已选 <strong>{{ selectedCount }}</strong> 项</span>
+                <span class="has-changes" v-if="hasChanges"> | 有未保存的更改</span>
+            </span>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="col-check"><input type="checkbox" :checked="allSelected" @change="toggleSelectAll" /></th>
+                        <th class="col-name">变量名</th>
+                        <th class="col-value">变量值</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-if="envList.length === 0">
+                        <td colspan="3">暂无环境变量数据</td>
+                    </tr>
+                    <tr v-for="(item, index) in envList" :key="item.name">
+                        <td class="col-check">
+                            <input type="checkbox" v-model="item.selected" />
+                        </td>
+                        <td class="col-name">{{ item.name }}</td>
+                        <td class="col-value">
+                            <input
+                                v-if="editingIndex === index"
+                                class="value-input"
+                                v-model="item.value"
+                                @blur="finishEdit(index)"
+                                @keyup.enter="finishEdit(index)"
+                                @keyup.esc="cancelEdit"
+                                v-focus
+                            />
+                            <span
+                                v-else
+                                class="value-text"
+                                @dblclick="startEdit(index)"
+                                title="双击编辑"
+                            >{{ item.value }}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="modal-mask" v-bind:class="{ show: showDeleteModal }" @click.self="showDeleteModal = false">
+            <div class="modal">
+                <div class="modal-title">确认删除</div>
+                <div class="modal-body">
+                    <div>确定要删除选中的 <strong>{{ selectedCount }}</strong> 个环境变量吗？此操作不可撤销。</div>
+                    <div style="margin-top:10px;" v-if="selectedItems.length <= 5">
+                        将删除：<span v-for="(name, i) in selectedItems" :key="name"><code>{{ name }}</code><span v-if="i < selectedItems.length - 1">、</span></span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" @click="showDeleteModal = false">取消</button>
+                    <button class="btn-delete" @click="deleteSelected">确认删除</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-mask" v-bind:class="{ show: showAddModal }" @click.self="showAddModal = false">
+            <div class="modal">
+                <div class="modal-title">新增环境变量</div>
+                <div class="modal-body">
+                    <div class="add-form">
+                        <input v-model="newVar.name" placeholder="变量名" ref="newNameInput" />
+                        <input v-model="newVar.value" placeholder="变量值" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" @click="showAddModal = false">取消</button>
+                    <button class="btn-confirm" @click="addVariable">确认添加</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="toast" v-bind:class="{ show: toastVisible }">{{ toastMessage }}</div>
+    </div>
+
+    <script language="javascript" src="js/app.js"></script>
+</body>
+</html>
