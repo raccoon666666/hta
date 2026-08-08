@@ -19,10 +19,12 @@ if (Test-Path $appDir) {
 $cssDir = Join-Path $appDir "css"
 $jsDir = Join-Path $appDir "js"
 $logsDir = Join-Path $appDir "logs"
+$typesDir = Join-Path $appDir "types"
 
 New-Item -ItemType Directory -Path $cssDir -Force | Out-Null
 New-Item -ItemType Directory -Path $jsDir -Force | Out-Null
 New-Item -ItemType Directory -Path $logsDir -Force | Out-Null
+New-Item -ItemType Directory -Path $typesDir -Force | Out-Null
 
 # UTF-8 with BOM 编码器
 $utf8WithBom = New-Object System.Text.UTF8Encoding $true
@@ -117,14 +119,11 @@ interface ${AppName}Methods {
 [System.IO.File]::WriteAllText((Join-Path $appDir "main.hta"), $htaContent, $utf8WithBom)
 [System.IO.File]::WriteAllText((Join-Path $cssDir "style.css"), $cssContent, $utf8WithBom)
 [System.IO.File]::WriteAllText((Join-Path $jsDir "app.js"), $jsContent, $utf8WithBom)
-
-# 写入 .d.ts 类型定义文件
-$dtsPath = Join-Path $projectRoot "types" "$AppName.d.ts"
-[System.IO.File]::WriteAllText($dtsPath, $dtsContent, $utf8WithBom)
+[System.IO.File]::WriteAllText((Join-Path $typesDir "$AppName.d.ts"), $dtsContent, $utf8WithBom)
 
 Write-Host "Created HTA app: $appDir" -ForegroundColor Green
 Write-Host "  main.hta" -ForegroundColor Gray
 Write-Host "  css/style.css" -ForegroundColor Gray
 Write-Host "  js/app.js" -ForegroundColor Gray
+Write-Host "  types/$AppName.d.ts" -ForegroundColor Gray
 Write-Host "  logs/" -ForegroundColor Gray
-Write-Host "Created type definition: types/$AppName.d.ts" -ForegroundColor Green

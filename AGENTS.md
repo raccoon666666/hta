@@ -15,14 +15,14 @@ project-root/
     js/com.js            # COM 组件封装
     js/common.js         # Mixin + 工具函数 + Vue 指令
     css/common.css       # 公共样式
-  types/                 # TypeScript 类型定义（仅编辑器提示）
-    com.d.ts             # COM 组件类型
-    common.d.ts          # 公共组件类型
-    {app-name}.d.ts      # 各应用类型
+    types/com.d.ts       # COM 组件类型定义
+    types/common.d.ts    # 公共组件类型定义
   {app-name}/            # 每个应用独立文件夹
     main.hta             # 入口文件
     js/                  # 应用专属 JS
     css/                 # 应用专属样式
+    types/               # 应用类型定义
+      {app-name}.d.ts
     logs/                # 日志目录
   tools/                 # 验证工具
 ```
@@ -53,8 +53,8 @@ project-root/
 - 禁止直接使用 `new ActiveXObject()`，必须通过 `HTAComponents` 获取
 
 ### 类型定义
-- 每个 app 的 JS 必须创建对应的 `.d.ts` 放在 `types/`
-- 公共组件库的 JS 也必须创建对应的 `.d.ts`
+- 每个 app 的 JS 必须在 app 内的 `types/` 创建对应的 `.d.ts`
+- 公共组件库的 JS 必须在 `components/types/` 创建对应的 `.d.ts`
 - 详细规范见 [docs/type-definitions.md](docs/type-definitions.md)
 
 ## 工具脚本
