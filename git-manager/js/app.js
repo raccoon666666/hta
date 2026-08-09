@@ -2,16 +2,16 @@
 window.resizeTo(w, h);
 window.moveTo((screen.availWidth - w) / 2, (screen.availHeight - h) / 2);
 
-var sleep = HTAComponents.sleep;
-var writeLog = HTAComponents.writeLog;
+var sleep = CommonComponents.sleep;
+var writeLog = CommonComponents.writeLog;
 
 function runGitSync(args, cwd) {
-    return HTAComponents.runCmdSync('git ' + args, cwd);
+    return COMComponents.runCmdSync('git ' + args, cwd);
 }
 
 new Vue({
     el: '#app',
-    mixins: [HTAComponents.ToastMixin, HTAComponents.LoadingMixin],
+    mixins: [CommonComponents.ToastMixin, CommonComponents.LoadingMixin],
     data: {
         currentRepo: "",
         recentRepos: [],
@@ -85,7 +85,7 @@ new Vue({
         loadRecentRepos: function() {
             try {
                 var regPath = "HKCU\\Software\\GitManager\\RecentRepos";
-                var val = HTAComponents.readReg(regPath);
+                var val = COMComponents.readReg(regPath);
                 this.recentRepos = val ? val.split(";") : [];
             } catch(e) {
                 this.recentRepos = [];
@@ -97,15 +97,15 @@ new Vue({
                 list.unshift(repo);
                 if (list.length > 10) list = list.slice(0, 10);
                 this.recentRepos = list;
-                HTAComponents.writeReg("HKCU\\Software\\GitManager\\RecentRepos", list.join(";"));
+                COMComponents.writeReg("HKCU\\Software\\GitManager\\RecentRepos", list.join(";"));
             } catch(e) {}
         },
         browseRepo: function() {
             this.showRepoMenu = false;
             try {
-                var path = HTAComponents.browseForFolder("选择Git仓库目录");
+                var path = COMComponents.browseForFolder("选择Git仓库目录");
                 if (path) {
-                    if (HTAComponents.folderExists(path + "\\.git")) {
+                    if (COMComponents.folderExists(path + "\\.git")) {
                         this.openRepo(path);
                     } else {
                         this.showToast("所选目录不是Git仓库");
@@ -116,7 +116,7 @@ new Vue({
             }
         },
         openRepo: function(repo) {
-            if (!HTAComponents.folderExists(repo + "\\.git")) {
+            if (!COMComponents.folderExists(repo + "\\.git")) {
                 this.showToast("所选目录不是Git仓库");
                 return;
             }

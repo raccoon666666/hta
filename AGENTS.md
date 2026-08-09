@@ -50,7 +50,7 @@ project-root/
 ### JavaScript 编写规范
 - 使用 `var`，禁止 `let`/`const`/`class`/`箭头函数`/`template literal`/`for...of`
 - 不支持 `WScript` 对象（如 `WScript.Sleep`）
-- 禁止直接使用 `new ActiveXObject()`，必须通过 `HTAComponents` 获取
+- 禁止直接使用 `new ActiveXObject()`，必须通过 `COMComponents` 获取
 
 ### 类型定义
 - 每个 app 的 JS 必须在 app 内的 `types/` 创建对应的 `.d.ts`

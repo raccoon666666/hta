@@ -1,46 +1,46 @@
-﻿var HTAComponents = HTAComponents || {};
+﻿var COMComponents = COMComponents || {};
 
-HTAComponents._comCache = {};
+COMComponents._comCache = {};
 
-HTAComponents.getShell = function() {
-    if (!HTAComponents._comCache.shell) {
-        HTAComponents._comCache.shell = new ActiveXObject("WScript.Shell");
+COMComponents.getShell = function() {
+    if (!COMComponents._comCache.shell) {
+        COMComponents._comCache.shell = new ActiveXObject("WScript.Shell");
     }
-    return HTAComponents._comCache.shell;
+    return COMComponents._comCache.shell;
 };
 
-HTAComponents.getFSO = function() {
-    if (!HTAComponents._comCache.fso) {
-        HTAComponents._comCache.fso = new ActiveXObject("Scripting.FileSystemObject");
+COMComponents.getFSO = function() {
+    if (!COMComponents._comCache.fso) {
+        COMComponents._comCache.fso = new ActiveXObject("Scripting.FileSystemObject");
     }
-    return HTAComponents._comCache.fso;
+    return COMComponents._comCache.fso;
 };
 
-HTAComponents.getShellApp = function() {
-    if (!HTAComponents._comCache.shellApp) {
-        HTAComponents._comCache.shellApp = new ActiveXObject("Shell.Application");
+COMComponents.getShellApp = function() {
+    if (!COMComponents._comCache.shellApp) {
+        COMComponents._comCache.shellApp = new ActiveXObject("Shell.Application");
     }
-    return HTAComponents._comCache.shellApp;
+    return COMComponents._comCache.shellApp;
 };
 
-HTAComponents.getEnvVars = function(type) {
-    return HTAComponents.getShell().Environment(type || "User");
+COMComponents.getEnvVars = function(type) {
+    return COMComponents.getShell().Environment(type || "User");
 };
 
-HTAComponents.runCmd = function(cmd, cwd) {
-    var shell = HTAComponents.getShell();
+COMComponents.runCmd = function(cmd, cwd) {
+    var shell = COMComponents.getShell();
     if (cwd) {
         shell.CurrentDirectory = cwd;
     }
     return shell.Exec('cmd /c ' + cmd + ' 2>&1');
 };
 
-HTAComponents.readReg = function(path) {
-    return HTAComponents.getShell().RegRead(path);
+COMComponents.readReg = function(path) {
+    return COMComponents.getShell().RegRead(path);
 };
 
-HTAComponents.writeReg = function(path, value, type) {
-    var shell = HTAComponents.getShell();
+COMComponents.writeReg = function(path, value, type) {
+    var shell = COMComponents.getShell();
     if (type) {
         shell.RegWrite(path, value, type);
     } else {
@@ -48,46 +48,46 @@ HTAComponents.writeReg = function(path, value, type) {
     }
 };
 
-HTAComponents.folderExists = function(path) {
-    return HTAComponents.getFSO().FolderExists(path);
+COMComponents.folderExists = function(path) {
+    return COMComponents.getFSO().FolderExists(path);
 };
 
-HTAComponents.fileExists = function(path) {
-    return HTAComponents.getFSO().FileExists(path);
+COMComponents.fileExists = function(path) {
+    return COMComponents.getFSO().FileExists(path);
 };
 
-HTAComponents.createFolder = function(path) {
-    var fso = HTAComponents.getFSO();
+COMComponents.createFolder = function(path) {
+    var fso = COMComponents.getFSO();
     if (!fso.FolderExists(path)) {
         fso.CreateFolder(path);
     }
     return path;
 };
 
-HTAComponents.getParentFolder = function(path) {
-    return HTAComponents.getFSO().GetParentFolderName(path);
+COMComponents.getParentFolder = function(path) {
+    return COMComponents.getFSO().GetParentFolderName(path);
 };
 
-HTAComponents.getBasePath = function() {
+COMComponents.getBasePath = function() {
     return unescape(location.href.replace("file:///", "").replace(/\//g, "\\"));
 };
 
-HTAComponents.openTextFile = function(path, mode, create) {
-    var fso = HTAComponents.getFSO();
+COMComponents.openTextFile = function(path, mode, create) {
+    var fso = COMComponents.getFSO();
     return fso.OpenTextFile(path, mode || 1, create !== false);
 };
 
-HTAComponents.browseForFolder = function(title, root) {
-    var shellApp = HTAComponents.getShellApp();
+COMComponents.browseForFolder = function(title, root) {
+    var shellApp = COMComponents.getShellApp();
     var folder = shellApp.BrowseForFolder(0, title || "选择文件夹", root || 0, 0);
     return folder ? folder.Self.Path : null;
 };
 
-HTAComponents.runCmdSync = function(cmd, cwd) {
-    var exec = HTAComponents.runCmd(cmd, cwd);
+COMComponents.runCmdSync = function(cmd, cwd) {
+    var exec = COMComponents.runCmd(cmd, cwd);
     var output = "";
     while (!exec.Status) {
-        HTAComponents.sleep(50);
+        CommonComponents.sleep(50);
     }
     if (exec.StdOut.AtEndOfStream === false) {
         output = exec.StdOut.ReadAll();

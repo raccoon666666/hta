@@ -80,14 +80,14 @@ var w = 800, h = 600;
 window.resizeTo(w, h);
 window.moveTo((screen.availWidth - w) / 2, (screen.availHeight - h) / 2);
 
-var writeLog = HTAComponents.writeLog;
-var sleep = HTAComponents.sleep;
+var writeLog = CommonComponents.writeLog;
+var sleep = CommonComponents.sleep;
 
-Vue.directive('focus', HTAComponents.FocusDirective);
+Vue.directive('focus', CommonComponents.FocusDirective);
 
 new Vue({
     el: '#app',
-    mixins: [HTAComponents.ToastMixin, HTAComponents.LoadingMixin],
+    mixins: [CommonComponents.ToastMixin, CommonComponents.LoadingMixin],
     data: {
     },
     methods: {

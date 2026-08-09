@@ -2,14 +2,14 @@
 window.resizeTo(w, h);
 window.moveTo((screen.availWidth - w) / 2, (screen.availHeight - h) / 2);
 
-var writeLog = HTAComponents.writeLog;
-var envUser = HTAComponents.getEnvVars("User");
+var writeLog = CommonComponents.writeLog;
+var envUser = COMComponents.getEnvVars("User");
 
-Vue.directive('focus', HTAComponents.FocusDirective);
+Vue.directive('focus', CommonComponents.FocusDirective);
 
 new Vue({
     el: '#app',
-    mixins: [HTAComponents.ToastMixin],
+    mixins: [CommonComponents.ToastMixin],
     data: {
         envList: [],
         editingIndex: -1,
@@ -76,7 +76,7 @@ new Vue({
                     } catch(ex) {}
                 }
 
-                loadFromEnv(HTAComponents.getEnvVars("System"), false);
+                loadFromEnv(COMComponents.getEnvVars("System"), false);
                 loadFromEnv(envUser, true);
 
                 var list = [];

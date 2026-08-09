@@ -1,16 +1,16 @@
-﻿var HTAComponents = HTAComponents || {};
+﻿var CommonComponents = CommonComponents || {};
 
-HTAComponents.sleep = function(ms) {
+CommonComponents.sleep = function(ms) {
     var start = new Date().getTime();
     while (new Date().getTime() - start < ms) {}
 };
 
-HTAComponents.writeLog = function(msg) {
+CommonComponents.writeLog = function(msg) {
     try {
-        var fso = HTAComponents.getFSO();
-        var basePath = HTAComponents.getBasePath();
-        var logDir = HTAComponents.getParentFolder(basePath) + "\\logs";
-        HTAComponents.createFolder(logDir);
+        var fso = COMComponents.getFSO();
+        var basePath = COMComponents.getBasePath();
+        var logDir = COMComponents.getParentFolder(basePath) + "\\logs";
+        COMComponents.createFolder(logDir);
         var ts = fso.OpenTextFile(logDir + "\\error.log", 8, true);
         var now = new Date();
         function p(n) { return n < 10 ? "0" + n : "" + n; }
@@ -19,7 +19,7 @@ HTAComponents.writeLog = function(msg) {
     } catch(e) {}
 };
 
-HTAComponents.ToastMixin = {
+CommonComponents.ToastMixin = {
     data: function() {
         return {
             toastVisible: false,
@@ -40,7 +40,7 @@ HTAComponents.ToastMixin = {
     }
 };
 
-HTAComponents.LoadingMixin = {
+CommonComponents.LoadingMixin = {
     data: function() {
         return {
             loading: false
@@ -48,7 +48,7 @@ HTAComponents.LoadingMixin = {
     }
 };
 
-HTAComponents.FocusDirective = {
+CommonComponents.FocusDirective = {
     inserted: function(el) {
         el.focus();
         el.select();

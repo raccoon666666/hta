@@ -8,21 +8,21 @@
 
 | 组件 | 引用方式 | 说明 |
 |------|----------|------|
-| `ToastMixin` | `mixins: [HTAComponents.ToastMixin]` | Toast 通知，提供 `showToast(msg, duration)` 方法 |
-| `LoadingMixin` | `mixins: [HTAComponents.LoadingMixin]` | 加载状态，提供 `loading` 数据属性 |
+| `ToastMixin` | `mixins: [CommonComponents.ToastMixin]` | Toast 通知，提供 `showToast(msg, duration)` 方法 |
+| `LoadingMixin` | `mixins: [CommonComponents.LoadingMixin]` | 加载状态，提供 `loading` 数据属性 |
 
 ### Vue 指令
 
 | 指令 | 引用方式 | 说明 |
 |------|----------|------|
-| `FocusDirective` | `Vue.directive('focus', HTAComponents.FocusDirective)` | 自动聚焦指令 |
+| `FocusDirective` | `Vue.directive('focus', CommonComponents.FocusDirective)` | 自动聚焦指令 |
 
 ### 工具函数
 
 | 函数 | 说明 |
 |------|------|
-| `HTAComponents.writeLog(msg)` | 写入日志到 `logs/error.log` |
-| `HTAComponents.sleep(ms)` | 阻塞等待（毫秒） |
+| `CommonComponents.writeLog(msg)` | 写入日志到 `logs/error.log` |
+| `CommonComponents.sleep(ms)` | 阻塞等待（毫秒） |
 
 ## 使用方式
 
@@ -41,14 +41,14 @@
 ### JavaScript 使用
 
 ```javascript
-var writeLog = HTAComponents.writeLog;
-var sleep = HTAComponents.sleep;
+var writeLog = CommonComponents.writeLog;
+var sleep = CommonComponents.sleep;
 
-Vue.directive('focus', HTAComponents.FocusDirective);
+Vue.directive('focus', CommonComponents.FocusDirective);
 
 new Vue({
     el: '#app',
-    mixins: [HTAComponents.ToastMixin, HTAComponents.LoadingMixin],
+    mixins: [CommonComponents.ToastMixin, CommonComponents.LoadingMixin],
     methods: {
         doSomething: function() {
             var self = this;
@@ -118,6 +118,6 @@ new Vue({
 1. 当多个 app 出现相同功能时，抽取到 `components/` 中
 2. JS 组件写入 `components/js/common.js` 或 `com.js`（COM 相关）
 3. 对应样式写入 `components/css/common.css`
-4. 在 `components/types/common.d.ts` 中添加对应的类型定义（命名空间 `CommonComponents`）
+4. 在 `components/types/` 中添加对应的 `.d.ts` 类型定义
 5. 更新 AGENTS.md 的表格
 6. 各 app 移除重复代码，改为引用公共组件
