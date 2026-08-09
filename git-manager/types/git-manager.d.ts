@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Git Manager 应用类型定义
  * 用于编辑器智能提示 (VS Code / WebStorm)
  * 运行时无效，仅作为开发参考
@@ -62,7 +62,6 @@ interface GitManagerComputed {
 }
 
 interface GitManagerMethods {
-    logToConsole(text: string): void;
     loadRecentRepos(): void;
     saveRecentRepo(repo: string): void;
     browseRepo(): void;

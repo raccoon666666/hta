@@ -70,18 +70,13 @@ new Vue({
     },
     watch: {
         currentRepo: function(val) {
+            log.info("currentRepo变成了{}", val)
             if (val) {
                 this.refreshAll();
             }
         }
     },
     methods: {
-        logToConsole: function(text) {
-            var self = this;
-            String(text).split('\n').forEach(function(line) {
-                self.consoleOutput.push(line);
-            });
-        },
         getDataPath: function() {
             return $COM.file.basePath().replace(/\\[^\\]+$/, "") + "\\data\\git-manager.json";
         },
@@ -140,7 +135,7 @@ new Vue({
             this.currentRepo = repo;
             this.saveRecentRepo(repo);
             this.consoleOutput = [];
-            this.logToConsole("Opened: " + repo);
+            log.info("打开仓库: {}", repo);
         },
         refreshAll: function() {
             var self = this;
@@ -176,7 +171,7 @@ new Vue({
             this.loading = true;
             var result = runGitSync("checkout \"" + branch + "\"", this.currentRepo);
             this.loading = false;
-            this.logToConsole("> git checkout " + branch + "\n" + result);
+            log.info("> git checkout {}\n{}", branch, result);
             this.showBranchMenu = false;
             if (result.indexOf("error") === -1 && result.indexOf("fatal") === -1) {
                 this.showToast("已切换到分支: " + branch);
@@ -191,7 +186,7 @@ new Vue({
             this.loading = true;
             var result = runGitSync("checkout -b \"" + name + "\" \"" + branch + "\"", this.currentRepo);
             this.loading = false;
-            this.logToConsole("> git checkout -b " + name + " " + branch + "\n" + result);
+            log.info("> git checkout -b {} {}\n{}", name, branch, result);
             this.showBranchMenu = false;
             if (result.indexOf("error") === -1 && result.indexOf("fatal") === -1) {
                 this.showToast("已创建并切换到: " + name);
@@ -207,7 +202,7 @@ new Vue({
             this.loading = true;
             var result = runGitSync("checkout -b \"" + name.trim() + "\"", this.currentRepo);
             this.loading = false;
-            this.logToConsole("> git checkout -b " + name.trim() + "\n" + result);
+            log.info("> git checkout -b {}\n{}", name.trim(), result);
             this.showBranchMenu = false;
             if (result.indexOf("error") === -1 && result.indexOf("fatal") === -1) {
                 this.showToast("已创建分支: " + name.trim());
@@ -333,7 +328,7 @@ new Vue({
             this.loading = true;
             var result = runGitSync("commit -m \"" + msg.replace(/"/g, '\\"') + "\"", this.currentRepo);
             this.loading = false;
-            this.logToConsole("> git commit -m \"" + msg + "\"\n" + result);
+            log.info("> git commit -m \"{}\"\n{}", msg, result);
             if (result.indexOf("error") === -1 && result.indexOf("fatal") === -1) {
                 this.showToast("提交成功");
                 this.commitMessage = "";
@@ -350,7 +345,7 @@ new Vue({
             var result = runGitSync("commit -m \"" + msg.replace(/"/g, '\\"') + "\"", this.currentRepo);
             if (result.indexOf("error") === -1 && result.indexOf("fatal") === -1) {
                 var pushResult = runGitSync("push", this.currentRepo);
-                this.logToConsole("> git commit -m \"" + msg + "\"\n" + result + "\n> git push\n" + pushResult);
+                log.info("> git commit -m \"{}\"\n{}\n> git push\n{}", msg, result, pushResult);
                 if (pushResult.indexOf("error") === -1 && pushResult.indexOf("fatal") === -1) {
                     this.showToast("提交并推送成功");
                     this.commitMessage = "";
@@ -359,7 +354,7 @@ new Vue({
                 }
                 this.refreshAll();
             } else {
-                this.logToConsole("> git commit -m \"" + msg + "\"\n" + result);
+                log.warn("> git commit -m \"{}\"\n{}", msg, result);
                 this.showToast("提交失败: " + result.split("\n")[0]);
             }
             this.loading = false;
@@ -370,7 +365,7 @@ new Vue({
             this.loading = true;
             var result = runGitSync("fetch", this.currentRepo);
             this.loading = false;
-            this.logToConsole("> git fetch\n" + result);
+            log.info("> git fetch\n{}", result);
             if (result.indexOf("error") === -1 && result.indexOf("fatal") === -1) {
                 this.showToast("Fetch 完成");
                 this.loadBranches();
@@ -384,7 +379,7 @@ new Vue({
             this.loading = true;
             var result = runGitSync("pull", this.currentRepo);
             this.loading = false;
-            this.logToConsole("> git pull\n" + result);
+            log.info("> git pull\n{}", result);
             if (result.indexOf("error") === -1 && result.indexOf("fatal") === -1) {
                 this.showToast("Pull 完成");
                 this.refreshAll();
@@ -398,7 +393,7 @@ new Vue({
             this.loading = true;
             var result = runGitSync("push", this.currentRepo);
             this.loading = false;
-            this.logToConsole("> git push\n" + result);
+            log.info("> git push\n{}", result);
             if (result.indexOf("error") === -1 && result.indexOf("fatal") === -1) {
                 this.showToast("Push 成功");
             } else {
