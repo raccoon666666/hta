@@ -15,10 +15,16 @@ project-root/
       vue.js
       vue.d.ts           # Vue2 类型定义
   components/            # 公共组件库（所有app共享）
-    js/common.js         # Mixin + 工具函数 + Vue 指令
+    js/util.js           # $Component.sleep / writeLog
+    js/ui.js             # $Component.ToastMixin / LoadingMixin
+    js/directive.js      # $Component.FocusDirective
+    js/log.js            # $Component.log { getLogger, setLevel, Level }
     js/promise.js        # Promise 实现（ES5 兼容）
     css/common.css       # 公共样式
-    types/common.d.ts    # 公共组件类型定义
+    types/util.d.ts      # 工具函数类型定义
+    types/ui.d.ts        # UI 组件类型定义
+    types/directive.d.ts # 指令类型定义
+    types/log.d.ts       # 日志系统类型定义
     types/promise.d.ts   # Promise 类型定义
   com/                   # COM 组件
     shell.js             # $COM.shell
@@ -61,7 +67,11 @@ project-root/
 ../com/file.js            # $COM.file { exists, folderExists, create, parent, basePath, open }
 ../com/json.js            # $COM.json { read, write }
 ../com/dialog.js          # $COM.dialog { browseForFolder }
-../components/js/common.js # Mixin + 工具函数
+../components/js/util.js    # $Component.sleep / writeLog
+../components/js/ui.js      # $Component.ToastMixin / LoadingMixin
+../components/js/directive.js # $Component.FocusDirective
+../components/js/log.js     # $Component.log
+../components/js/promise.js # Promise
 ../components/css/common.css # 公共样式
 ```
 
@@ -86,8 +96,8 @@ project-root/
 - 详细规范见 [docs/type-definitions.md](docs/type-definitions.md)
 
 ### 日志系统
-- `$COM.log.getLogger(name)` — 获取 Logger
-- `$COM.log.setLevel('INFO')` — 设置全局最小级别
+- `$Component.log.getLogger(name)` — 获取 Logger
+- `$Component.log.setLevel('INFO')` — 设置全局最小级别
 - `log.info('用户 {} 登录', name)` — 占位符语法
 - 详细用法见 [docs/component-library.md](docs/component-library.md)
 
@@ -97,7 +107,8 @@ project-root/
 2. **辅助函数分组到子对象**：按职责划分为 `cmd`、`reg`、`env`、`file`、`json`、`dialog`
 3. **函数名在命名空间内简洁**：不重复父对象语义，如 `$COM.json.read` 而非 `$COM.readJsonFile`
 4. **类型信息通过 .d.ts 表达**：不在参数名中编码类型，用 TypeScript 接口声明参数和返回值类型
-5. **单一入口**：所有 COM 操作通过 `$COM` 访问，不散落全局函数
+5. **单一入口**：所有 COM 操作通过 `$COM` 访问，所有公共组件通过 `$Component` 访问，不散落全局函数
+6. **公共组件按功能拆分**：`$Component` 的辅助函数按功能分为 `util`、`ui`、`directive`、`log` 独立文件，调用方按需引用
 
 ## 工具脚本
 

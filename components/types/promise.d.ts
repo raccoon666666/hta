@@ -1,7 +1,5 @@
 ﻿/**
  * Promise 类型定义（ES5 兼容实现）
- * 用于编辑器智能提示 (VS Code / WebStorm)
- * 运行时无效，仅作为开发参考
  */
 
 interface PromiseLike<T> {

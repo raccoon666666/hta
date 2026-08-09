@@ -8,21 +8,21 @@
 
 | 组件 | 引用方式 | 说明 |
 |------|----------|------|
-| `ToastMixin` | `mixins: [CommonComponents.ToastMixin]` | Toast 通知，提供 `showToast(msg, duration)` 方法 |
-| `LoadingMixin` | `mixins: [CommonComponents.LoadingMixin]` | 加载状态，提供 `loading` 数据属性 |
+| `ToastMixin` | `mixins: [$Component.ToastMixin]` | Toast 通知，提供 `showToast(msg, duration)` 方法 |
+| `LoadingMixin` | `mixins: [$Component.LoadingMixin]` | 加载状态，提供 `loading` 数据属性 |
 
 ### Vue 指令
 
 | 指令 | 引用方式 | 说明 |
 |------|----------|------|
-| `FocusDirective` | `Vue.directive('focus', CommonComponents.FocusDirective)` | 自动聚焦指令 |
+| `FocusDirective` | `Vue.directive('focus', $Component.FocusDirective)` | 自动聚焦指令 |
 
 ### 工具函数
 
 | 函数 | 说明 |
 |------|------|
-| `CommonComponents.writeLog(msg)` | 写入日志到 `logs/error.log`（旧版，建议使用 log） |
-| `CommonComponents.sleep(ms)` | 阻塞等待（毫秒） |
+| `$Component.writeLog(msg)` | 写入日志到 `logs/error.log`（旧版，建议使用 log） |
+| `$Component.sleep(ms)` | 阻塞等待（毫秒） |
 
 ### 日志系统
 
@@ -30,10 +30,10 @@
 
 ```javascript
 // 获取 Logger
-var log = CommonComponents.log.getLogger('GitManager');
+var log = $Component.log.getLogger('GitManager');
 
 // 设置全局最小级别（DEBUG/INFO/WARN/ERROR）
-CommonComponents.log.setLevel('INFO');
+$Component.log.setLevel('INFO');
 
 // 使用占位符
 log.info('用户 {} 登录成功，共 {} 个仓库', username, count);
@@ -62,14 +62,14 @@ log.error('操作失败: {}', errorMsg);
 ### JavaScript 使用
 
 ```javascript
-var writeLog = CommonComponents.writeLog;
-var sleep = CommonComponents.sleep;
+var writeLog = $Component.writeLog;
+var sleep = $Component.sleep;
 
-Vue.directive('focus', CommonComponents.FocusDirective);
+Vue.directive('focus', $Component.FocusDirective);
 
 new Vue({
     el: '#app',
-    mixins: [CommonComponents.ToastMixin, CommonComponents.LoadingMixin],
+    mixins: [$Component.ToastMixin, $Component.LoadingMixin],
     methods: {
         doSomething: function() {
             var self = this;

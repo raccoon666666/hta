@@ -1,59 +1,4 @@
-﻿var CommonComponents = CommonComponents || {};
-
-CommonComponents.sleep = function(ms) {
-    var start = new Date().getTime();
-    while (new Date().getTime() - start < ms) {}
-};
-
-CommonComponents.writeLog = function(msg) {
-    try {
-        var fso = COMComponents.getFSO();
-        var basePath = COMComponents.getBasePath();
-        var logDir = COMComponents.getParentFolder(basePath) + "\\logs";
-        COMComponents.createFolder(logDir);
-        var ts = fso.OpenTextFile(logDir + "\\error.log", 8, true);
-        var now = new Date();
-        function p(n) { return n < 10 ? "0" + n : "" + n; }
-        ts.WriteLine(now.getFullYear() + "-" + p(now.getMonth()+1) + "-" + p(now.getDate()) + "T" + p(now.getHours()) + ":" + p(now.getMinutes()) + ":" + p(now.getSeconds()) + " " + msg);
-        ts.Close();
-    } catch(e) {}
-};
-
-CommonComponents.ToastMixin = {
-    data: function() {
-        return {
-            toastVisible: false,
-            toastMessage: '',
-            toastTimer: null
-        };
-    },
-    methods: {
-        showToast: function(msg, duration) {
-            var self = this;
-            this.toastMessage = msg;
-            this.toastVisible = true;
-            if (this.toastTimer) clearTimeout(this.toastTimer);
-            this.toastTimer = setTimeout(function() {
-                self.toastVisible = false;
-            }, duration || 2000);
-        }
-    }
-};
-
-CommonComponents.LoadingMixin = {
-    data: function() {
-        return {
-            loading: false
-        };
-    }
-};
-
-CommonComponents.FocusDirective = {
-    inserted: function(el) {
-        el.focus();
-        el.select();
-    }
-};
+﻿var $Component = $Component || {};
 
 (function() {
     var LEVELS = { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 };
@@ -61,7 +6,7 @@ CommonComponents.FocusDirective = {
     var _minLevel = 0;
     var _currentFile = '';
     var _currentSize = 0;
-    var _maxSize = 10 * 1024 * 1024; // 10MB
+    var _maxSize = 10 * 1024 * 1024;
 
     function _formatTime() {
         var d = new Date();
@@ -91,7 +36,8 @@ CommonComponents.FocusDirective = {
         return logDir + '\\' + name + '.log';
     }
 
-    function _rollFile(fso, logDir) {
+    function _rollFile(logDir) {
+        var fso = $COM.fso;
         var seq = 0;
         var path = _getLogPath(logDir, seq);
         while (fso.FileExists(path)) {
@@ -112,16 +58,15 @@ CommonComponents.FocusDirective = {
         if (level < _minLevel) return;
         var msg = _formatTime() + ' [' + LEVEL_NAMES[level] + '] [' + logger + '] ' + _formatMessage(pattern, args);
         try {
-            var fso = COMComponents.getFSO();
-            var basePath = COMComponents.getBasePath();
-            var logDir = COMComponents.getParentFolder(basePath) + '\\logs';
-            COMComponents.createFolder(logDir);
-            if (!_currentFile || !_currentFile.indexOf(logDir)) {
-                _rollFile(fso, logDir);
+            var fso = $COM.fso;
+            var logDir = $COM.file.parent($COM.file.basePath()) + '\\logs';
+            $COM.file.create(logDir);
+            if (!_currentFile || _currentFile.indexOf(logDir) !== 0) {
+                _rollFile(logDir);
             } else {
                 var checkFile = fso.GetFile(_currentFile);
                 if (checkFile.Size >= _maxSize) {
-                    _rollFile(fso, logDir);
+                    _rollFile(logDir);
                 }
             }
             var msgLen = msg.length + 2;
@@ -155,7 +100,7 @@ CommonComponents.FocusDirective = {
         };
     }
 
-    CommonComponents.log = {
+    $Component.log = {
         getLogger: function(name) { return _createLogger(name); },
         setLevel: function(level) {
             if (typeof level === 'string') {

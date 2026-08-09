@@ -2,8 +2,8 @@
 window.resizeTo(w, h);
 window.moveTo((screen.availWidth - w) / 2, (screen.availHeight - h) / 2);
 
-var sleep = CommonComponents.sleep;
-var log = CommonComponents.log.getLogger('GitManager');
+var sleep = $Component.sleep;
+var log = $Component.log.getLogger('GitManager');
 
 function runGitSync(args, cwd) {
     return $COM.cmd.runSync('git ' + args, cwd);
@@ -11,7 +11,7 @@ function runGitSync(args, cwd) {
 
 new Vue({
     el: '#app',
-    mixins: [CommonComponents.ToastMixin, CommonComponents.LoadingMixin],
+    mixins: [$Component.ToastMixin, $Component.LoadingMixin],
     data: {
         currentRepo: "",
         recentRepos: [],

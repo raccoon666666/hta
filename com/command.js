@@ -9,7 +9,7 @@ $COM.cmd = {
         var exec = $COM.cmd.run(cmd, cwd);
         var output = "";
         while (!exec.Status) {
-            CommonComponents.sleep(50);
+            $Component.sleep(50);
         }
         if (exec.StdOut.AtEndOfStream === false) output = exec.StdOut.ReadAll();
         if (exec.StdErr.AtEndOfStream === false) output += exec.StdErr.ReadAll();

@@ -65,7 +65,11 @@ $htaContent = @"
     <script language="javascript" src="../com/file.js"></script>
     <script language="javascript" src="../com/json.js"></script>
     <script language="javascript" src="../com/dialog.js"></script>
-    <script language="javascript" src="../components/js/common.js"></script>
+    <script language="javascript" src="../components/js/util.js"></script>
+    <script language="javascript" src="../components/js/ui.js"></script>
+    <script language="javascript" src="../components/js/directive.js"></script>
+    <script language="javascript" src="../components/js/log.js"></script>
+    <script language="javascript" src="../components/js/promise.js"></script>
     <script language="javascript" src="../components/js/promise.js"></script>
     <link rel="stylesheet" type="text/css" href="../components/css/common.css" />
     <link rel="stylesheet" type="text/css" href="css/style.css" />

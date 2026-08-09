@@ -2,14 +2,14 @@
 window.resizeTo(w, h);
 window.moveTo((screen.availWidth - w) / 2, (screen.availHeight - h) / 2);
 
-var log = CommonComponents.log.getLogger('EnvManager');
+var log = $Component.log.getLogger('EnvManager');
 var envUser = $COM.getEnvVars("User");
 
-Vue.directive('focus', CommonComponents.FocusDirective);
+Vue.directive('focus', $Component.FocusDirective);
 
 new Vue({
     el: '#app',
-    mixins: [CommonComponents.ToastMixin],
+    mixins: [$Component.ToastMixin],
     data: {
         envList: [],
         editingIndex: -1,
