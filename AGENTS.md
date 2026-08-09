@@ -55,10 +55,10 @@ project-root/
 ../com/shell.js           # $COM.shell (WScript.Shell)
 ../com/fso.js             # $COM.fso (FileSystemObject)
 ../com/shell-app.js       # $COM.shellApp (Shell.Application)
-../com/command.js         # 命令/注册表辅助函数
-../com/file.js            # 文件操作辅助函数
-../com/dialog.js          # 对话框辅助函数
-../com/json.js            # JSON 文件辅助函数
+../com/command.js         # $COM 命令/注册表辅助函数
+../com/file.js            # $COM 文件操作辅助函数
+../com/dialog.js          # $COM 对话框辅助函数
+../com/json.js            # $COM JSON 文件辅助函数
 ../components/js/common.js # Mixin + 工具函数
 ../components/css/common.css # 公共样式
 ```
@@ -76,7 +76,7 @@ project-root/
 ### JavaScript 编写规范
 - 使用 `var`，禁止 `let`/`const`/`class`/`箭头函数`/`template literal`/`for...of`
 - 不支持 `WScript` 对象（如 `WScript.Sleep`）
-- 禁止直接使用 `new ActiveXObject()`，必须通过 `COMComponents` 获取
+- 禁止直接使用 `new ActiveXObject()`，必须通过 `$COM` 获取
 
 ### 类型定义
 - 每个 app 的 JS 必须在 app 内的 `types/` 创建对应的 `.d.ts`
@@ -84,8 +84,8 @@ project-root/
 - 详细规范见 [docs/type-definitions.md](docs/type-definitions.md)
 
 ### 日志系统
-- `CommonComponents.log.getLogger(name)` — 获取 Logger
-- `CommonComponents.log.setLevel('INFO')` — 设置全局最小级别
+- `$COM.log.getLogger(name)` — 获取 Logger
+- `$COM.log.setLevel('INFO')` — 设置全局最小级别
 - `log.info('用户 {} 登录', name)` — 占位符语法
 - 详细用法见 [docs/component-library.md](docs/component-library.md)
 

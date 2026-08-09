@@ -1,4 +1,4 @@
-﻿COMComponents.readJsonFile = function(filePath) {
+﻿$COM.readJsonFile = function(filePath) {
     try {
         if (!$COM.fso.FileExists(filePath)) return null;
         var stream = $COM.fso.OpenTextFile(filePath, 1, false);
@@ -10,7 +10,7 @@
     }
 };
 
-COMComponents.writeJsonFile = function(filePath, data) {
+$COM.writeJsonFile = function(filePath, data) {
     try {
         var folder = $COM.fso.GetParentFolderName(filePath);
         if (!$COM.fso.FolderExists(folder)) $COM.fso.CreateFolder(folder);

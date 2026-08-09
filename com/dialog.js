@@ -1,4 +1,4 @@
-﻿COMComponents.browseForFolder = function(title, root) {
+﻿$COM.browseForFolder = function(title, root) {
     var rootFolder = 0;
     if (typeof root === 'number') {
         rootFolder = root;

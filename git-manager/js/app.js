@@ -6,7 +6,7 @@ var sleep = CommonComponents.sleep;
 var log = CommonComponents.log.getLogger('GitManager');
 
 function runGitSync(args, cwd) {
-    return COMComponents.runCmdSync('git ' + args, cwd);
+    return $COM.runCmdSync('git ' + args, cwd);
 }
 
 new Vue({
@@ -83,15 +83,15 @@ new Vue({
             });
         },
         getDataPath: function() {
-            return COMComponents.getBasePath().replace(/\\[^\\]+$/, "") + "\\data\\git-manager.json";
+            return $COM.getBasePath().replace(/\\[^\\]+$/, "") + "\\data\\git-manager.json";
         },
         loadData: function() {
-            var data = COMComponents.readJsonFile(this.getDataPath()) || {};
+            var data = $COM.readJsonFile(this.getDataPath()) || {};
             this.recentRepos = data.recentRepos || [];
             this.lastBrowsePath = data.lastBrowsePath || '';
         },
         saveData: function() {
-            COMComponents.writeJsonFile(this.getDataPath(), {
+            $COM.writeJsonFile(this.getDataPath(), {
                 recentRepos: this.recentRepos,
                 lastBrowsePath: this.lastBrowsePath
             });
@@ -112,14 +112,14 @@ new Vue({
                 var rootPath = '';
                 if (this.lastBrowsePath) {
                     var parent = this.lastBrowsePath.replace(/\\[^\\]+$/, '');
-                    if (parent && COMComponents.folderExists(parent)) rootPath = parent;
+                    if (parent && $COM.folderExists(parent)) rootPath = parent;
                 }
-                var path = COMComponents.browseForFolder("选择Git仓库目录", rootPath);
+                var path = $COM.browseForFolder("选择Git仓库目录", rootPath);
                 if (path) {
                     this.lastBrowsePath = path;
                     this.saveData();
                     log.info('选择目录: {}', path);
-                    if (COMComponents.folderExists(path + "\\.git")) {
+                    if ($COM.folderExists(path + "\\.git")) {
                         this.openRepo(path);
                     } else {
                         log.warn('不是Git仓库: {}', path);
@@ -132,7 +132,7 @@ new Vue({
             }
         },
         openRepo: function(repo) {
-            if (!COMComponents.folderExists(repo + "\\.git")) {
+            if (!$COM.folderExists(repo + "\\.git")) {
                 this.showToast("所选目录不是Git仓库");
                 return;
             }

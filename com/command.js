@@ -1,10 +1,10 @@
-﻿COMComponents.runCmd = function(cmd, cwd) {
+﻿$COM.runCmd = function(cmd, cwd) {
     if (cwd) $COM.shell.CurrentDirectory = cwd;
     return $COM.shell.Exec('cmd /c ' + cmd + ' 2>&1');
 };
 
-COMComponents.runCmdSync = function(cmd, cwd) {
-    var exec = COMComponents.runCmd(cmd, cwd);
+$COM.runCmdSync = function(cmd, cwd) {
+    var exec = $COM.runCmd(cmd, cwd);
     var output = "";
     while (!exec.Status) {
         CommonComponents.sleep(50);
@@ -14,11 +14,11 @@ COMComponents.runCmdSync = function(cmd, cwd) {
     return output;
 };
 
-COMComponents.readReg = function(path) {
+$COM.readReg = function(path) {
     return $COM.shell.RegRead(path);
 };
 
-COMComponents.writeReg = function(path, value, type) {
+$COM.writeReg = function(path, value, type) {
     if (type) {
         $COM.shell.RegWrite(path, value, type);
     } else {
@@ -26,6 +26,6 @@ COMComponents.writeReg = function(path, value, type) {
     }
 };
 
-COMComponents.getEnvVars = function(type) {
+$COM.getEnvVars = function(type) {
     return $COM.shell.Environment(type || "User");
 };

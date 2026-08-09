@@ -12,7 +12,7 @@
 
 | 命名空间 | 文件 | 说明 |
 |----------|------|------|
-| `COMComponents` | `components/types/com.d.ts` | COM 组件（ActiveXObject 封装） |
+| `$COM` | `components/types/com.d.ts` | COM 组件（ActiveXObject 封装） |
 | `CommonComponents` | `components/types/common.d.ts` | 公共组件（Mixin/工具函数/指令） |
 
 ## 已提供的类型定义
@@ -34,7 +34,7 @@
 ### 1. COM 组件类型定义 (`components/types/com.d.ts`)
 
 ```typescript
-declare namespace COMComponents {
+declare namespace $COM {
     interface WScriptShell {
         Environment(type: string): EnvironmentObject;
         Exec(command: string): WshExec;
@@ -48,8 +48,8 @@ declare namespace COMComponents {
 ```
 
 - 使用 `interface` 定义 COM 对象的方法、属性
-- 所有 COMComponents 函数必须包含 JSDoc 注释
-- 使用 `declare namespace COMComponents` 组织全局声明
+- 所有 $COM 函数必须包含 JSDoc 注释
+- 使用 `declare namespace $COM` 组织全局声明
 
 ### 2. 公共组件类型定义 (`components/types/common.d.ts`)
 
@@ -108,7 +108,7 @@ interface EnvManagerMethods {
 ## 示例：完整的 COM 接口定义
 
 ```typescript
-declare namespace COMComponents {
+declare namespace $COM {
     interface FileSystemObject {
         FolderExists(path: string): boolean;
         FileExists(path: string): boolean;

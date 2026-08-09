@@ -3,7 +3,7 @@ window.resizeTo(w, h);
 window.moveTo((screen.availWidth - w) / 2, (screen.availHeight - h) / 2);
 
 var log = CommonComponents.log.getLogger('EnvManager');
-var envUser = COMComponents.getEnvVars("User");
+var envUser = $COM.getEnvVars("User");
 
 Vue.directive('focus', CommonComponents.FocusDirective);
 
@@ -76,7 +76,7 @@ new Vue({
                     } catch(ex) {}
                 }
 
-                loadFromEnv(COMComponents.getEnvVars("System"), false);
+                loadFromEnv($COM.getEnvVars("System"), false);
                 loadFromEnv(envUser, true);
 
                 var list = [];

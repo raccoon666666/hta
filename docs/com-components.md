@@ -5,7 +5,7 @@
 ## 基本原则
 
 - **禁止在 app 中直接使用 `new ActiveXObject()`**
-- 所有 COM 对象必须通过 `COMComponents` 获取
+- 所有 COM 对象必须通过 `$COM` 获取
 - COM 实例会被缓存，避免重复创建
 
 ## 可用的 COM 帮助函数
@@ -14,38 +14,38 @@
 
 | 函数 | 说明 | 返回值 |
 |------|------|--------|
-| `COMComponents.getShell()` | 获取 WScript.Shell 实例 | `WScriptShell` |
-| `COMComponents.getEnvVars(type)` | 获取环境变量集合（"User"/"System"） | `EnvironmentObject` |
-| `COMComponents.runCmd(cmd, cwd)` | 执行命令（异步） | `WshExec` |
-| `COMComponents.runCmdSync(cmd, cwd)` | 执行命令（同步，等待完成） | `string` |
-| `COMComponents.readReg(path)` | 读取注册表 | `string\|number` |
-| `COMComponents.writeReg(path, value, type?)` | 写入注册表 | `void` |
+| `$COM.getShell()` | 获取 WScript.Shell 实例 | `WScriptShell` |
+| `$COM.getEnvVars(type)` | 获取环境变量集合（"User"/"System"） | `EnvironmentObject` |
+| `$COM.runCmd(cmd, cwd)` | 执行命令（异步） | `WshExec` |
+| `$COM.runCmdSync(cmd, cwd)` | 执行命令（同步，等待完成） | `string` |
+| `$COM.readReg(path)` | 读取注册表 | `string\|number` |
+| `$COM.writeReg(path, value, type?)` | 写入注册表 | `void` |
 
 ### FileSystemObject 相关
 
 | 函数 | 说明 | 返回值 |
 |------|------|--------|
-| `COMComponents.getFSO()` | 获取 Scripting.FileSystemObject 实例 | `FileSystemObject` |
-| `COMComponents.folderExists(path)` | 判断文件夹是否存在 | `boolean` |
-| `COMComponents.fileExists(path)` | 判断文件是否存在 | `boolean` |
-| `COMComponents.createFolder(path)` | 创建文件夹（如果不存在） | `string` |
-| `COMComponents.getParentFolder(path)` | 获取父文件夹路径 | `string` |
-| `COMComponents.getBasePath()` | 获取当前 HTA 的文件基础路径 | `string` |
-| `COMComponents.openTextFile(path, mode?, create?)` | 打开文本文件 | `TextStream` |
+| `$COM.getFSO()` | 获取 Scripting.FileSystemObject 实例 | `FileSystemObject` |
+| `$COM.folderExists(path)` | 判断文件夹是否存在 | `boolean` |
+| `$COM.fileExists(path)` | 判断文件是否存在 | `boolean` |
+| `$COM.createFolder(path)` | 创建文件夹（如果不存在） | `string` |
+| `$COM.getParentFolder(path)` | 获取父文件夹路径 | `string` |
+| `$COM.getBasePath()` | 获取当前 HTA 的文件基础路径 | `string` |
+| `$COM.openTextFile(path, mode?, create?)` | 打开文本文件 | `TextStream` |
 
 ### Shell.Application 相关
 
 | 函数 | 说明 | 返回值 |
 |------|------|--------|
-| `COMComponents.getShellApp()` | 获取 Shell.Application 实例 | `ShellApplication` |
-| `COMComponents.browseForFolder(title?, root?)` | 浏览文件夹对话框 | `string\|null` |
+| `$COM.getShellApp()` | 获取 Shell.Application 实例 | `ShellApplication` |
+| `$COM.browseForFolder(title?, root?)` | 浏览文件夹对话框 | `string\|null` |
 
 ## 使用示例
 
 ### 执行命令并等待完成
 
 ```javascript
-var output = COMComponents.runCmdSync('git status', repoPath);
+var output = $COM.runCmdSync('git status', repoPath);
 if (output.indexOf('error') === -1) {
     // 成功
 }
@@ -55,28 +55,28 @@ if (output.indexOf('error') === -1) {
 
 ```javascript
 // 读取
-var repos = COMComponents.readReg('HKCU\\Software\\GitManager\\RecentRepos');
+var repos = $COM.readReg('HKCU\\Software\\GitManager\\RecentRepos');
 
 // 写入
-COMComponents.writeReg('HKCU\\Software\\GitManager\\RecentRepos', value);
+$COM.writeReg('HKCU\\Software\\GitManager\\RecentRepos', value);
 ```
 
 ### 文件操作
 
 ```javascript
-if (COMComponents.folderExists(path)) {
-    var fso = COMComponents.getFSO();
+if ($COM.folderExists(path)) {
+    var fso = $COM.getFSO();
     // ...
 }
 
 // 创建目录（如果不存在）
-COMComponents.createFolder('C:\\temp\\myapp');
+$COM.createFolder('C:\\temp\\myapp');
 ```
 
 ### 浏览文件夹
 
 ```javascript
-var path = COMComponents.browseForFolder('选择Git仓库目录');
+var path = $COM.browseForFolder('选择Git仓库目录');
 if (path) {
     // 用户选择了文件夹
 }
@@ -97,7 +97,7 @@ if (path) {
 | `com/fso.js` | `$COM.fso` | FileSystemObject |
 | `com/shell-app.js` | `$COM.shellApp` | Shell.Application |
 
-## 辅助函数（COMComponents）
+## 辅助函数（$COM）
 
 | 文件 | 说明 |
 |------|------|
