@@ -19,8 +19,13 @@
 
 | 文件 | 对应 JS | 说明 |
 |------|---------|------|
-| `components/types/com.d.ts` | `components/js/com.js` | COM 组件类型定义（命名空间 `COMComponents`） |
+| `com/types/com.d.ts` | `com/*.js` | 全局 COM 类型 |
+| `com/types/shell.d.ts` | `com/shell.js` | WScript.Shell 类型定义 |
+| `com/types/fso.d.ts` | `com/fso.js` | FileSystemObject 类型定义 |
+| `com/types/shell-app.d.ts` | `com/shell-app.js` | Shell.Application 类型定义 |
+| `com/types/json.d.ts` | `com/json.js` | JSON 文件操作类型定义 |
 | `components/types/common.d.ts` | `components/js/common.js` | 公共组件类型定义（命名空间 `CommonComponents`） |
+| `components/types/promise.d.ts` | `components/js/promise.js` | Promise 类型定义 |
 | `env-manager/types/env-manager.d.ts` | `env-manager/js/app.js` | 环境变量管理应用类型定义 |
 | `git-manager/types/git-manager.d.ts` | `git-manager/js/app.js` | Git Manager 应用类型定义 |
 

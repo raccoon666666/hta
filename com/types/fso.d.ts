@@ -1,41 +1,8 @@
 ﻿/**
- * COM 组件类型定义
- * 用于编辑器智能提示 (VS Code / WebStorm)
- * 运行时无效，仅作为开发参考
+ * Scripting.FileSystemObject 类型定义
  */
 
 declare namespace COMComponents {
-    // ========== 缓存管理 ==========
-    const _comCache: { [key: string]: any };
-
-    // ========== WScript.Shell ==========
-    interface WScriptShell {
-        Environment(type: string): EnvironmentObject;
-        Exec(command: string): WshExec;
-        RegRead(path: string): string | number;
-        RegWrite(path: string, value: string | number, type?: string): void;
-        RegDelete(path: string): void;
-        CurrentDirectory: string;
-        ExpandEnvironmentStrings(str: string): string;
-        Run(command: string, style?: number, wait?: boolean): number;
-        SpecialFolders(name: string): string;
-    }
-
-    interface EnvironmentObject {
-        Item(name: string): string;
-        Remove(name: string): void;
-        readonly Count: number;
-    }
-
-    interface WshExec {
-        Status: number;
-        StdOut: TextStream;
-        StdErr: TextStream;
-        StdIn: TextStream;
-        Terminate(): void;
-    }
-
-    // ========== Scripting.FileSystemObject ==========
     interface FileSystemObject {
         FolderExists(path: string): boolean;
         FileExists(path: string): boolean;
@@ -148,101 +115,11 @@ declare namespace COMComponents {
         readonly SerialNumber: number;
     }
 
-    // ========== Shell.Application ==========
-    interface ShellApplication {
-        BrowseForFolder(hwnd: number, title: string, options: number, rootFolder?: any): FolderItem;
-        NameSpace(vFolder: any): Folder;
-        Windows(): ShellWindows;
-    }
-
-    interface FolderItem {
-        readonly Path: string;
-        readonly Name: string;
-        readonly Self: FolderItem;
-        readonly Parent: any;
-        readonly IsFolder: boolean;
-        readonly IsFileSystem: boolean;
-        readonly IsLink: boolean;
-        readonly IsBrowsable: boolean;
-        readonly GetLink: any;
-        readonly GetFolder: any;
-        readonly Verbs: FolderItemVerbs;
-        readonly ModifyDate: Date;
-        readonly Size: number;
-        readonly Type: string;
-        InvokeVerb(verb?: string): void;
-    }
-
-    interface FolderItemVerbs {
-        readonly Count: number;
-        Item(index: number): FolderItemVerb;
-    }
-
-    interface FolderItemVerb {
-        readonly Name: string;
-        DoIt(): void;
-    }
-
-    interface ShellWindows {
-        readonly Count: number;
-        Item(index: number): any;
-    }
-
-    // ========== Enumerator ==========
-    interface Enumerator {
-        atEnd(): boolean;
-        moveNext(): void;
-        item(): any;
-        moveFirst(): void;
-    }
-
-    // ========== COM 工厂方法 ==========
-    function getShell(): WScriptShell;
     function getFSO(): FileSystemObject;
-    function getShellApp(): ShellApplication;
-    function getEnvVars(type?: string): EnvironmentObject;
-    function runCmd(cmd: string, cwd?: string): WshExec;
-    function readReg(path: string): string | number;
-    function writeReg(path: string, value: string | number, type?: string): void;
     function folderExists(path: string): boolean;
     function fileExists(path: string): boolean;
     function createFolder(path: string): string;
     function getParentFolder(path: string): string;
     function getBasePath(): string;
     function openTextFile(path: string, mode?: number, create?: boolean): TextStream;
-    function browseForFolder(title?: string, root?: number): string | null;
-    function runCmdSync(cmd: string, cwd?: string): string;
-    /** 读取 JSON 文件，不存在或失败返回 null */
-    function readJsonFile(filePath: string): any;
-    /** 写入 JSON 文件，失败返回 false */
-    function writeJsonFile(filePath: string, data: any): boolean;
 }
-
-// ========== 全局 COM 类型 ==========
-
-/**
- * WScript.Shell COM 对象
- */
-declare var WScript: {
-    Shell: COMComponents.WScriptShell;
-    CreateObject(progid: string): any;
-    Echo(text: string): void;
-    Quit(exitCode?: number): number;
-    ScriptFullName: string;
-    ScriptName: string;
-    Version: string;
-    BuildVersion: string;
-};
-
-/**
- * Enumerator 构造函数
- */
-declare function Enumerator(comObject: any): COMComponents.Enumerator;
-
-/**
- * ActiveXObject 构造函数
- */
-declare function ActiveXObject(progid: string): any;
-
-/** 全局变量声明 */
-declare var COMComponents: typeof COMComponents;

@@ -84,11 +84,20 @@ if (path) {
 
 ## 新增 COM 组件的流程
 
-1. 在 `components/js/com.js` 中添加封装函数
-2. 在 `components/types/com.d.ts` 中添加对应的 TypeScript 类型定义（命名空间 `COMComponents`）
+1. 在 `com/` 目录下对应的组件文件中添加封装函数
+2. 在 `com/types/` 目录下对应的 `.d.ts` 文件中添加类型定义
 3. 更新 AGENTS.md 的「COM 帮助函数」表格
-4. 各 app 使用新的 COM 帮助函数
+4. 各 app 根据需要引用对应的 COM 组件文件
+
+## COM 组件文件
+
+| 文件 | 说明 |
+|------|------|
+| `com/shell.js` | WScript.Shell：命令执行、注册表、环境变量 |
+| `com/fso.js` | FileSystemObject：文件/文件夹操作 |
+| `com/shell-app.js` | Shell.Application：文件夹浏览对话框 |
+| `com/json.js` | JSON 文件读写 |
 
 ## COM 接口参考
 
-详细接口定义见 `components/types/com.d.ts`。
+详细接口定义见 `com/types/` 目录。
