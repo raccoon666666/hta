@@ -14,7 +14,6 @@
 |----------|------|------|
 | `COMComponents` | `components/types/com.d.ts` | COM 组件（ActiveXObject 封装） |
 | `CommonComponents` | `components/types/common.d.ts` | 公共组件（Mixin/工具函数/指令） |
-| `HTAComponents` | 运行时全局对象 | `COMComponents & CommonComponents` 的合并声明 |
 
 ## 已提供的类型定义
 

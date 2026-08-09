@@ -239,3 +239,6 @@ declare function Enumerator(comObject: any): COMComponents.Enumerator;
  * ActiveXObject 构造函数
  */
 declare function ActiveXObject(progid: string): any;
+
+/** 全局变量声明 */
+declare var COMComponents: typeof COMComponents;

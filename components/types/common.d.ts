@@ -37,8 +37,6 @@ declare namespace CommonComponents {
     };
 }
 
-// ========== 统一全局声明 ==========
-/** 运行时全局对象，合并 COM 和公共组件的类型 */
-declare var HTAComponents: typeof COMComponents & typeof CommonComponents;
-
-
+// ========== 全局变量声明 ==========
+declare var COMComponents: typeof COMComponents;
+declare var CommonComponents: typeof CommonComponents;
