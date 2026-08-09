@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 公共组件类型定义
  * 用于编辑器智能提示 (VS Code / WebStorm)
  * 运行时无效，仅作为开发参考
@@ -34,6 +34,35 @@ declare namespace CommonComponents {
     /** 自动聚焦指令 */
     const FocusDirective: {
         inserted(el: HTMLElement): void;
+    };
+
+    // ========== 日志系统 ==========
+    /** 日志级别常量 */
+    const Level: { DEBUG: number; INFO: number; WARN: number; ERROR: number };
+
+    /** Logger 接口 */
+    interface Logger {
+        /** 输出 DEBUG 级别日志，支持 {} 占位符 */
+        debug(pattern: string, ...args: any[]): void;
+        /** 输出 INFO 级别日志，支持 {} 占位符 */
+        info(pattern: string, ...args: any[]): void;
+        /** 输出 WARN 级别日志，支持 {} 占位符 */
+        warn(pattern: string, ...args: any[]): void;
+        /** 输出 ERROR 级别日志，支持 {} 占位符 */
+        error(pattern: string, ...args: any[]): void;
+        isDebugEnabled(): boolean;
+        isInfoEnabled(): boolean;
+        isWarnEnabled(): boolean;
+        isErrorEnabled(): boolean;
+    }
+
+    /** 日志工具 */
+    const log: {
+        /** 获取指定名称的 Logger */
+        getLogger(name: string): Logger;
+        /** 设置全局最小日志级别（字符串或 Level 常量） */
+        setLevel(level: string | number): void;
+        Level: { DEBUG: number; INFO: number; WARN: number; ERROR: number };
     };
 }
 

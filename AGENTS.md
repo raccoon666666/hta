@@ -61,6 +61,12 @@ project-root/
 - 公共组件库的 JS 必须在 `components/types/` 创建对应的 `.d.ts`
 - 详细规范见 [docs/type-definitions.md](docs/type-definitions.md)
 
+### 日志系统
+- `CommonComponents.log.getLogger(name)` — 获取 Logger
+- `CommonComponents.log.setLevel('INFO')` — 设置全局最小级别
+- `log.info('用户 {} 登录', name)` — 占位符语法
+- 详细用法见 [docs/component-library.md](docs/component-library.md)
+
 ## 工具脚本
 
 | 脚本 | 用法 | 说明 |

@@ -3,7 +3,7 @@ window.resizeTo(w, h);
 window.moveTo((screen.availWidth - w) / 2, (screen.availHeight - h) / 2);
 
 var sleep = CommonComponents.sleep;
-var writeLog = CommonComponents.writeLog;
+var log = CommonComponents.log.getLogger('GitManager');
 
 function runGitSync(args, cwd) {
     return COMComponents.runCmdSync('git ' + args, cwd);

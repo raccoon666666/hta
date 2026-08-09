@@ -54,3 +54,62 @@ CommonComponents.FocusDirective = {
         el.select();
     }
 };
+
+(function() {
+    var LEVELS = { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 };
+    var LEVEL_NAMES = ['DEBUG', 'INFO ', 'WARN ', 'ERROR'];
+    var _minLevel = 0;
+
+    function _formatTime() {
+        var d = new Date();
+        function p(n) { return n < 10 ? '0' + n : '' + n; }
+        function p3(n) { return n < 100 ? (n < 10 ? '00' + n : '0' + n) : '' + n; }
+        return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' +
+            p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()) + '.' + p3(d.getMilliseconds());
+    }
+
+    function _formatMessage(pattern, args) {
+        var i = 0;
+        return pattern.replace(/\{\}/g, function() {
+            return i < args.length ? String(args[i++]) : '{}';
+        });
+    }
+
+    function _write(level, logger, pattern, args) {
+        if (level < _minLevel) return;
+        var msg = _formatTime() + ' [' + LEVEL_NAMES[level] + '] [' + logger + '] ' + _formatMessage(pattern, args);
+        try {
+            var fso = COMComponents.getFSO();
+            var basePath = COMComponents.getBasePath();
+            var logDir = COMComponents.getParentFolder(basePath) + '\\logs';
+            COMComponents.createFolder(logDir);
+            var ts = fso.OpenTextFile(logDir + '\\app.log', 8, true);
+            ts.WriteLine(msg);
+            ts.Close();
+        } catch (e) {}
+    }
+
+    function _createLogger(name) {
+        return {
+            debug: function(pattern) { _write(0, name, pattern, Array.prototype.slice.call(arguments, 1)); },
+            info: function(pattern) { _write(1, name, pattern, Array.prototype.slice.call(arguments, 1)); },
+            warn: function(pattern) { _write(2, name, pattern, Array.prototype.slice.call(arguments, 1)); },
+            error: function(pattern) { _write(3, name, pattern, Array.prototype.slice.call(arguments, 1)); },
+            isDebugEnabled: function() { return _minLevel <= 0; },
+            isInfoEnabled: function() { return _minLevel <= 1; },
+            isWarnEnabled: function() { return _minLevel <= 2; },
+            isErrorEnabled: function() { return _minLevel <= 3; }
+        };
+    }
+
+    CommonComponents.log = {
+        getLogger: function(name) { return _createLogger(name); },
+        setLevel: function(level) {
+            if (typeof level === 'string') {
+                level = LEVELS[level.toUpperCase()];
+            }
+            if (level !== undefined) _minLevel = level;
+        },
+        Level: LEVELS
+    };
+})();

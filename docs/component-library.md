@@ -21,8 +21,29 @@
 
 | 函数 | 说明 |
 |------|------|
-| `CommonComponents.writeLog(msg)` | 写入日志到 `logs/error.log` |
+| `CommonComponents.writeLog(msg)` | 写入日志到 `logs/error.log`（旧版，建议使用 log） |
 | `CommonComponents.sleep(ms)` | 阻塞等待（毫秒） |
+
+### 日志系统
+
+参考 SLF4J 设计，支持日志级别、Logger 名称、占位符：
+
+```javascript
+// 获取 Logger
+var log = CommonComponents.log.getLogger('GitManager');
+
+// 设置全局最小级别（DEBUG/INFO/WARN/ERROR）
+CommonComponents.log.setLevel('INFO');
+
+// 使用占位符
+log.info('用户 {} 登录成功，共 {} 个仓库', username, count);
+log.error('操作失败: {}', errorMsg);
+```
+
+输出格式：
+```
+2026-08-09 17:43:25.123 [INFO ] [GitManager] 用户 admin 登录成功，共 3 个仓库
+```
 
 ## 使用方式
 

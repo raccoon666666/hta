@@ -2,7 +2,7 @@
 window.resizeTo(w, h);
 window.moveTo((screen.availWidth - w) / 2, (screen.availHeight - h) / 2);
 
-var writeLog = CommonComponents.writeLog;
+var log = CommonComponents.log.getLogger('EnvManager');
 var envUser = COMComponents.getEnvVars("User");
 
 Vue.directive('focus', CommonComponents.FocusDirective);
@@ -89,7 +89,7 @@ new Vue({
                 this.envList = list;
                 this.originalList = JSON.parse(JSON.stringify(list));
             } catch(e) {
-                writeLog("loadEnvVars error: " + e.message);
+                log.error("loadEnvVars error: {}", e.message);
                 this.showToast("加载失败: " + e.message);
             }
         },
@@ -132,7 +132,7 @@ new Vue({
                     self.showToast("保存成功 (" + changes.length + " 项)");
                     return;
                 }
-                try { envUser(changes[idx].name) = changes[idx].value; } catch(e) { writeLog("save error: " + e.message); }
+                try { envUser(changes[idx].name) = changes[idx].value; } catch(e) { log.error("save error: {}", e.message); }
                 idx++;
                 setTimeout(processNext, 0);
             }
@@ -156,7 +156,7 @@ new Vue({
                     self.showToast("已删除 " + items.length + " 个环境变量");
                     return;
                 }
-                try { envUser.Remove(items[idx]); } catch(e) { writeLog("delete error: " + e.message); }
+                try { envUser.Remove(items[idx]); } catch(e) { log.error("delete error: {}", e.message); }
                 idx++;
                 setTimeout(processNext, 0);
             }
