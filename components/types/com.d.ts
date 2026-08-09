@@ -1,10 +1,10 @@
-﻿/**
- * HTA 项目全局类型定义
+/**
+ * COM 组件类型定义
  * 用于编辑器智能提示 (VS Code / WebStorm)
  * 运行时无效，仅作为开发参考
  */
 
-declare namespace HTAComponents {
+declare namespace COMComponents {
     // ========== 缓存管理 ==========
     const _comCache: { [key: string]: any };
 
@@ -212,37 +212,6 @@ declare namespace HTAComponents {
     function openTextFile(path: string, mode?: number, create?: boolean): TextStream;
     function browseForFolder(title?: string, root?: number): string | null;
     function runCmdSync(cmd: string, cwd?: string): string;
-
-    // ========== 工具函数 ==========
-    /** 阻塞等待（毫秒） */
-    function sleep(ms: number): void;
-    /** 写入日志到 logs/error.log */
-    function writeLog(msg: string): void;
-
-    // ========== Vue Mixins ==========
-    /** Toast 通知 mixin，提供 showToast(msg, duration) 方法 */
-    const ToastMixin: {
-        data(): {
-            toastVisible: boolean;
-            toastMessage: string;
-            toastTimer: number | null;
-        };
-        methods: {
-            showToast(msg: string, duration?: number): void;
-        };
-    };
-
-    /** 加载状态 mixin，提供 loading 数据属性 */
-    const LoadingMixin: {
-        data(): {
-            loading: boolean;
-        };
-    };
-
-    /** 自动聚焦指令 */
-    const FocusDirective: {
-        inserted(el: HTMLElement): void;
-    };
 }
 
 // ========== 全局 COM 类型 ==========
@@ -251,7 +220,7 @@ declare namespace HTAComponents {
  * WScript.Shell COM 对象
  */
 declare var WScript: {
-    Shell: HTAComponents.WScriptShell;
+    Shell: COMComponents.WScriptShell;
     CreateObject(progid: string): any;
     Echo(text: string): void;
     Quit(exitCode?: number): number;
@@ -264,7 +233,7 @@ declare var WScript: {
 /**
  * Enumerator 构造函数
  */
-declare function Enumerator(comObject: any): HTAComponents.Enumerator;
+declare function Enumerator(comObject: any): COMComponents.Enumerator;
 
 /**
  * ActiveXObject 构造函数

@@ -12,13 +12,22 @@
 
 | 文件 | 对应 JS | 说明 |
 |------|---------|------|
-| `components/types/hta.d.ts` | `components/js/*` | 全局类型定义（COM + 公共组件） |
+| `components/types/com.d.ts` | `components/js/com.js` | COM 组件类型定义（命名空间 COMComponents） |
+| `components/types/common.d.ts` | `components/js/common.js` | 公共组件类型定义（命名空间 CommonComponents） |
 | `env-manager/types/env-manager.d.ts` | `env-manager/js/app.js` | 环境变量管理应用类型定义 |
 | `git-manager/types/git-manager.d.ts` | `git-manager/js/app.js` | Git Manager 应用类型定义 |
 
+## 命名空间
+
+| 命名空间 | 文件 | 说明 |
+|----------|------|------|
+| `COMComponents` | `components/types/com.d.ts` | COM 组件（ActiveXObject 封装） |
+| `CommonComponents` | `components/types/common.d.ts` | 公共组件（Mixin/工具函数/指令） |
+| `HTAComponents` | 运行时全局对象 | 合并自 `COMComponents & CommonComponents` |
+
 ## 编写规则
 
-### 1. COM 组件类型定义 (`types/com.d.ts`)
+### 1. COM 组件类型定义 (`components/types/com.d.ts`)
 
 ```typescript
 declare namespace HTAComponents {
