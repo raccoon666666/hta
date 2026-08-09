@@ -125,7 +125,7 @@ project-root/
 3. 如果报语法错误，修复 JS 代码后再次验证
 4. 全部 `[PASS]` 后，执行「固化检查」
 5. 固化完成后，任务才算完成
-6. **Git 提交** — 任务完成后，简短总结本次修改内容，作为 commit message 提交代码（使用中文）
+6. **Git 提交并推送** — 任务完成后，简短总结本次修改内容，作为 commit message 提交代码（使用中文），并推送到远程仓库 `origin` 的对应分支（如 `git push origin master:main`）
 
 ## 详细文档
 
