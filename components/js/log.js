@@ -2,7 +2,7 @@
 
 (function() {
     var LEVELS = { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 };
-    var LEVEL_NAMES = ['DEBUG', 'INFO ', 'WARN ', 'ERROR'];
+    var LEVEL_NAMES = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
     var _minLevel = 0;
     var _currentFile = '';
     var _currentSize = 0;
@@ -19,8 +19,9 @@
     function _formatFileTime() {
         var d = new Date();
         function p(n) { return n < 10 ? '0' + n : '' + n; }
-        return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '_' +
-            p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds());
+        function p3(n) { return n < 100 ? (n < 10 ? '00' + n : '0' + n) : '' + n; }
+        return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' +
+            p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()) + '.' + p3(d.getMilliseconds());
     }
 
     function _formatMessage(pattern, args) {
