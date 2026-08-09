@@ -31,7 +31,7 @@
 每个 app 的 `main.hta` 中必须按以下顺序引用：
 
 ```html
-<script language="javascript" src="../vue/vue.js"></script>
+<script language="javascript" src="../library/vue/vue.js"></script>
 <script language="javascript" src="../components/js/com.js"></script>
 <script language="javascript" src="../components/js/common.js"></script>
 <link rel="stylesheet" type="text/css" href="../components/css/common.css" />

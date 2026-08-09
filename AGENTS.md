@@ -10,7 +10,10 @@ project-root/
     com-components.md    # COM 组件规范
     component-library.md # 公共组件库使用指南
     known-issues.md      # 已知问题日志
-  vue/                   # Vue2 第三方库
+  library/               # 第三方库
+    vue/                 # Vue2 第三方库
+      vue.js
+      vue.d.ts           # Vue2 类型定义
   components/            # 公共组件库（所有app共享）
     js/com.js            # COM 组件封装
     js/common.js         # Mixin + 工具函数 + Vue 指令
@@ -31,7 +34,7 @@ project-root/
 
 ### 引用路径
 ```
-../vue/vue.js             # Vue2 库
+../library/vue/vue.js      # Vue2 库
 ../components/js/com.js   # COM 组件（必须在 common.js 之前）
 ../components/js/common.js # Mixin + 工具函数
 ../components/css/common.css # 公共样式

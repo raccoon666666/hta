@@ -54,7 +54,7 @@ $htaContent = @"
         SYSMENU="yes"
         VERSION="1.0"
     />
-    <script language="javascript" src="../vue/vue.js"></script>
+    <script language="javascript" src="../library/vue/vue.js"></script>
     <script language="javascript" src="../components/js/com.js"></script>
     <script language="javascript" src="../components/js/common.js"></script>
     <link rel="stylesheet" type="text/css" href="../components/css/common.css" />
