@@ -82,23 +82,19 @@ new Vue({
                 self.consoleOutput.push(line);
             });
         },
+        getDataPath: function() {
+            return COMComponents.getBasePath().replace(/\\[^\\]+$/, "") + "\\data\\git-manager.json";
+        },
         loadRecentRepos: function() {
-            try {
-                var regPath = "HKCU\\Software\\GitManager\\RecentRepos";
-                var val = COMComponents.readReg(regPath);
-                this.recentRepos = val ? val.split(";") : [];
-            } catch(e) {
-                this.recentRepos = [];
-            }
+            var data = COMComponents.readJsonFile(this.getDataPath());
+            this.recentRepos = (data && data.recentRepos) ? data.recentRepos : [];
         },
         saveRecentRepo: function(repo) {
-            try {
-                var list = this.recentRepos.filter(function(r) { return r !== repo; });
-                list.unshift(repo);
-                if (list.length > 10) list = list.slice(0, 10);
-                this.recentRepos = list;
-                COMComponents.writeReg("HKCU\\Software\\GitManager\\RecentRepos", list.join(";"));
-            } catch(e) {}
+            var list = this.recentRepos.filter(function(r) { return r !== repo; });
+            list.unshift(repo);
+            if (list.length > 10) list = list.slice(0, 10);
+            this.recentRepos = list;
+            COMComponents.writeJsonFile(this.getDataPath(), { recentRepos: list });
         },
         browseRepo: function() {
             this.showRepoMenu = false;

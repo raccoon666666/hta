@@ -26,6 +26,7 @@ project-root/
     css/                 # 应用专属样式
     types/               # 应用类型定义
       {app-name}.d.ts
+    data/                # 应用数据存储（JSON 文件）
     logs/                # 日志目录
   tools/                 # 验证工具
 ```

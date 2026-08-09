@@ -1,4 +1,4 @@
-/**
+﻿/**
  * COM 组件类型定义
  * 用于编辑器智能提示 (VS Code / WebStorm)
  * 运行时无效，仅作为开发参考
@@ -212,6 +212,10 @@ declare namespace COMComponents {
     function openTextFile(path: string, mode?: number, create?: boolean): TextStream;
     function browseForFolder(title?: string, root?: number): string | null;
     function runCmdSync(cmd: string, cwd?: string): string;
+    /** 读取 JSON 文件，不存在或失败返回 null */
+    function readJsonFile(filePath: string): any;
+    /** 写入 JSON 文件，失败返回 false */
+    function writeJsonFile(filePath: string, data: any): boolean;
 }
 
 // ========== 全局 COM 类型 ==========

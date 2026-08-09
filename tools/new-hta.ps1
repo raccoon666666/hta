@@ -20,11 +20,13 @@ $cssDir = Join-Path $appDir "css"
 $jsDir = Join-Path $appDir "js"
 $logsDir = Join-Path $appDir "logs"
 $typesDir = Join-Path $appDir "types"
+$dataDir = Join-Path $appDir "data"
 
 New-Item -ItemType Directory -Path $cssDir -Force | Out-Null
 New-Item -ItemType Directory -Path $jsDir -Force | Out-Null
 New-Item -ItemType Directory -Path $logsDir -Force | Out-Null
 New-Item -ItemType Directory -Path $typesDir -Force | Out-Null
+New-Item -ItemType Directory -Path $dataDir -Force | Out-Null
 
 # UTF-8 with BOM 编码器
 $utf8WithBom = New-Object System.Text.UTF8Encoding $true
@@ -126,4 +128,5 @@ Write-Host "  main.hta" -ForegroundColor Gray
 Write-Host "  css/style.css" -ForegroundColor Gray
 Write-Host "  js/app.js" -ForegroundColor Gray
 Write-Host "  types/$AppName.d.ts" -ForegroundColor Gray
+Write-Host "  data/" -ForegroundColor Gray
 Write-Host "  logs/" -ForegroundColor Gray
