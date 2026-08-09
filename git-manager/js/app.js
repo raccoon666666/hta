@@ -5,8 +5,20 @@ window.moveTo((screen.availWidth - w) / 2, (screen.availHeight - h) / 2);
 var sleep = $Component.sleep;
 var log = $Component.log.getLogger('GitManager');
 
+// WScript 读取子进程输出时按系统 ANSI 代码页解码，git 默认输出 UTF-8，
+// 需让 git 以系统代码页输出，否则中文会乱码。从注册表读取 ACP 并映射为 git 编码名。
+var gitOutputEncoding = "gbk";
+try {
+    var acp = parseInt($COM.reg.read("HKLM\\SYSTEM\\CurrentControlSet\\Control\\Nls\\CodePage\\ACP"), 10);
+    if (acp && acp > 0) {
+        gitOutputEncoding = (acp === 65001) ? "utf-8" : "cp" + acp;
+    }
+} catch (e) {
+    log.warn("读取系统代码页失败，使用默认 gbk: {}", e.message);
+}
+
 function runGitSync(args, cwd) {
-    return $COM.cmd.runSync('git ' + args, cwd);
+    return $COM.cmd.runSync('git -c i18n.logOutputEncoding=' + gitOutputEncoding + ' ' + args, cwd);
 }
 
 new Vue({

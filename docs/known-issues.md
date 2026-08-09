@@ -11,3 +11,4 @@
 | 5 | PowerShell `ReadAllBytes`+`WriteAllText` 双重叠加 BOM | 使用 `Encoding.UTF8.GetBytes` + `WriteAllBytes` 精确控制 | `tools\fix-encoding.ps1` |
 | 6 | IE11 不支持 `Element.closest()` | 手动遍历 parentNode 判断祖先元素 | 「JavaScript 编写规范」 |
 | 7 | fix-encoding 覆盖写导致文件内容丢失 | 写入后立即验证文件非空，edit 操作前先 Read | 「工具脚本」工作流 |
+| 8 | git 输出 UTF-8 中文被 WScript 按 ANSI 代码页解码导致乱码 | 运行 git 时加 `-c i18n.logOutputEncoding=cp<ACP>`，ACP 从注册表 `HKLM\SYSTEM\CurrentControlSet\Control\Nls\CodePage\ACP` 读取 | git-manager `runGitSync` 封装 |
