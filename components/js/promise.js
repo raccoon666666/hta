@@ -28,7 +28,11 @@
             self._finale();
         }
 
-        if (fn) fn(resolve, reject);
+        if (fn) {
+            setTimeout(function() {
+                fn(resolve, reject);
+            }, 0);
+        }
     }
 
     Promise.prototype.then = function(onFulfilled, onRejected) {
