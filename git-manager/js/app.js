@@ -109,7 +109,11 @@ new Vue({
         browseRepo: function() {
             this.showRepoMenu = false;
             try {
-                var rootPath = this.lastBrowsePath || '';
+                var rootPath = '';
+                if (this.lastBrowsePath) {
+                    var parent = this.lastBrowsePath.replace(/\\[^\\]+$/, '');
+                    if (parent && COMComponents.folderExists(parent)) rootPath = parent;
+                }
                 var path = COMComponents.browseForFolder("选择Git仓库目录", rootPath);
                 if (path) {
                     this.lastBrowsePath = path;
