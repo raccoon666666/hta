@@ -12,10 +12,9 @@
 
 | 文件 | 对应 JS | 说明 |
 |------|---------|------|
-| `types/com.d.ts` | `components/js/com.js` | COM 组件类型定义 |
-| `types/common.d.ts` | `components/js/common.js` | 公共 mixin + 工具函数类型定义 |
-| `types/env-manager.d.ts` | `env-manager/js/app.js` | 环境变量管理应用类型定义 |
-| `types/git-manager.d.ts` | `git-manager/js/app.js` | Git Manager 应用类型定义 |
+| `components/types/hta.d.ts` | `components/js/*` | 全局类型定义（COM + 公共组件） |
+| `env-manager/types/env-manager.d.ts` | `env-manager/js/app.js` | 环境变量管理应用类型定义 |
+| `git-manager/types/git-manager.d.ts` | `git-manager/js/app.js` | Git Manager 应用类型定义 |
 
 ## 编写规则
 

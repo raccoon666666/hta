@@ -118,6 +118,6 @@ new Vue({
 1. 当多个 app 出现相同功能时，抽取到 `components/` 中
 2. JS 组件写入 `components/js/common.js` 或 `com.js`（COM 相关）
 3. 对应样式写入 `components/css/common.css`
-4. 在 `types/` 中添加对应的 `.d.ts` 类型定义
+4. 在 `components/types/hta.d.ts` 中添加对应的类型定义
 5. 更新 AGENTS.md 的表格
 6. 各 app 移除重复代码，改为引用公共组件

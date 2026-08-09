@@ -85,10 +85,10 @@ if (path) {
 ## 新增 COM 组件的流程
 
 1. 在 `components/js/com.js` 中添加封装函数
-2. 在 `types/com.d.ts` 中添加对应的 TypeScript 类型定义
+2. 在 `components/types/hta.d.ts` 中添加对应的 TypeScript 类型定义
 3. 更新 AGENTS.md 的「COM 帮助函数」表格
 4. 各 app 使用新的 COM 帮助函数
 
 ## COM 接口参考
 
-详细接口定义见 `types/com.d.ts`。
+详细接口定义见 `components/types/hta.d.ts`。
