@@ -59,6 +59,9 @@ CommonComponents.FocusDirective = {
     var LEVELS = { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 };
     var LEVEL_NAMES = ['DEBUG', 'INFO ', 'WARN ', 'ERROR'];
     var _minLevel = 0;
+    var _currentFile = '';
+    var _currentSize = 0;
+    var _maxSize = 10 * 1024 * 1024; // 10MB
 
     function _formatTime() {
         var d = new Date();
@@ -68,11 +71,41 @@ CommonComponents.FocusDirective = {
             p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()) + '.' + p3(d.getMilliseconds());
     }
 
+    function _formatFileTime() {
+        var d = new Date();
+        function p(n) { return n < 10 ? '0' + n : '' + n; }
+        return d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '_' +
+            p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds());
+    }
+
     function _formatMessage(pattern, args) {
         var i = 0;
         return pattern.replace(/\{\}/g, function() {
             return i < args.length ? String(args[i++]) : '{}';
         });
+    }
+
+    function _getLogPath(logDir, seq) {
+        var name = _formatFileTime();
+        if (seq > 0) name += '_' + seq;
+        return logDir + '\\' + name + '.log';
+    }
+
+    function _rollFile(fso, logDir) {
+        var seq = 0;
+        var path = _getLogPath(logDir, seq);
+        while (fso.FileExists(path)) {
+            var file = fso.GetFile(path);
+            if (file.Size < _maxSize) {
+                _currentFile = path;
+                _currentSize = file.Size;
+                return;
+            }
+            seq++;
+            path = _getLogPath(logDir, seq);
+        }
+        _currentFile = path;
+        _currentSize = 0;
     }
 
     function _write(level, logger, pattern, args) {
@@ -83,9 +116,29 @@ CommonComponents.FocusDirective = {
             var basePath = COMComponents.getBasePath();
             var logDir = COMComponents.getParentFolder(basePath) + '\\logs';
             COMComponents.createFolder(logDir);
-            var ts = fso.OpenTextFile(logDir + '\\app.log', 8, true);
+            if (!_currentFile || !_currentFile.indexOf(logDir)) {
+                _rollFile(fso, logDir);
+            } else {
+                var checkFile = fso.GetFile(_currentFile);
+                if (checkFile.Size >= _maxSize) {
+                    _rollFile(fso, logDir);
+                }
+            }
+            var msgLen = msg.length + 2;
+            if (_currentSize + msgLen > _maxSize) {
+                var seq = 0;
+                var path = _getLogPath(logDir, seq);
+                while (fso.FileExists(path)) {
+                    seq++;
+                    path = _getLogPath(logDir, seq);
+                }
+                _currentFile = path;
+                _currentSize = 0;
+            }
+            var ts = fso.OpenTextFile(_currentFile, 8, true);
             ts.WriteLine(msg);
             ts.Close();
+            _currentSize += msgLen;
         } catch (e) {}
     }
 
