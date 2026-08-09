@@ -17,9 +17,11 @@ project-root/
   components/            # 公共组件库（所有app共享）
     js/com.js            # COM 组件封装
     js/common.js         # Mixin + 工具函数 + Vue 指令
+    js/promise.js        # Promise 实现（ES5 兼容）
     css/common.css       # 公共样式
     types/com.d.ts       # COM 组件类型定义
     types/common.d.ts    # 公共组件类型定义
+    types/promise.d.ts   # Promise 类型定义
   {app-name}/            # 每个应用独立文件夹
     main.hta             # 入口文件
     js/                  # 应用专属 JS

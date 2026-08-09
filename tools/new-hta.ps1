@@ -59,6 +59,7 @@ $htaContent = @"
     <script language="javascript" src="../library/vue/vue.js"></script>
     <script language="javascript" src="../components/js/com.js"></script>
     <script language="javascript" src="../components/js/common.js"></script>
+    <script language="javascript" src="../components/js/promise.js"></script>
     <link rel="stylesheet" type="text/css" href="../components/css/common.css" />
     <link rel="stylesheet" type="text/css" href="css/style.css" />
 </head>
