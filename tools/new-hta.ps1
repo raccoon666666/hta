@@ -60,6 +60,9 @@ $htaContent = @"
     <script language="javascript" src="../com/shell.js"></script>
     <script language="javascript" src="../com/fso.js"></script>
     <script language="javascript" src="../com/shell-app.js"></script>
+    <script language="javascript" src="../com/command.js"></script>
+    <script language="javascript" src="../com/file.js"></script>
+    <script language="javascript" src="../com/dialog.js"></script>
     <script language="javascript" src="../com/json.js"></script>
     <script language="javascript" src="../components/js/common.js"></script>
     <script language="javascript" src="../components/js/promise.js"></script>

@@ -20,16 +20,22 @@ project-root/
     css/common.css       # 公共样式
     types/common.d.ts    # 公共组件类型定义
     types/promise.d.ts   # Promise 类型定义
-  com/                   # COM 组件（每个组件独立文件）
-    shell.js             # WScript.Shell
-    fso.js               # Scripting.FileSystemObject
-    shell-app.js         # Shell.Application
-    json.js              # JSON 文件操作
-    types/shell.d.ts     # Shell 类型定义
-    types/fso.d.ts       # FSO 类型定义
-    types/shell-app.d.ts # Shell.Application 类型定义
-    types/json.d.ts      # JSON 类型定义
-    types/com.d.ts       # 全局 COM 类型
+  com/                   # COM 组件
+    shell.js             # WScript.Shell → $COM.shell
+    fso.js               # FileSystemObject → $COM.fso
+    shell-app.js         # Shell.Application → $COM.shellApp
+    command.js           # 命令/注册表辅助函数
+    file.js              # 文件操作辅助函数
+    dialog.js            # 对话框辅助函数
+    json.js              # JSON 文件辅助函数
+    types/com.d.ts       # $COM 全局对象 + 基础类型
+    types/shell.d.ts     # Shell 接口
+    types/fso.d.ts       # FSO 接口
+    types/shell-app.d.ts # Shell.Application 接口
+    types/command.d.ts   # 命令/注册表函数声明
+    types/file.d.ts      # 文件函数声明
+    types/dialog.d.ts    # 对话框函数声明
+    types/json.d.ts      # JSON 函数声明
   {app-name}/            # 每个应用独立文件夹
     main.hta             # 入口文件
     js/                  # 应用专属 JS
@@ -46,10 +52,13 @@ project-root/
 ### 引用路径
 ```
 ../library/vue/vue.js      # Vue2 库
-../com/shell.js           # WScript.Shell
-../com/fso.js             # FileSystemObject
-../com/shell-app.js       # Shell.Application
-../com/json.js            # JSON 文件操作
+../com/shell.js           # $COM.shell (WScript.Shell)
+../com/fso.js             # $COM.fso (FileSystemObject)
+../com/shell-app.js       # $COM.shellApp (Shell.Application)
+../com/command.js         # 命令/注册表辅助函数
+../com/file.js            # 文件操作辅助函数
+../com/dialog.js          # 对话框辅助函数
+../com/json.js            # JSON 文件辅助函数
 ../components/js/common.js # Mixin + 工具函数
 ../components/css/common.css # 公共样式
 ```

@@ -1,10 +1,15 @@
 ﻿/**
- * 全局 COM 类型定义
+ * 全局 COM 对象声明
  */
 
-declare namespace COMComponents {
-    const _comCache: { [key: string]: any };
+/** COM 对象容器 */
+declare var $COM: {
+    shell: COMComponents.WScriptShell;
+    fso: COMComponents.FileSystemObject;
+    shellApp: COMComponents.ShellApplication;
+};
 
+declare namespace COMComponents {
     /** Enumerator 接口 */
     interface Enumerator {
         atEnd(): boolean;
@@ -31,6 +36,3 @@ declare function Enumerator(comObject: any): COMComponents.Enumerator;
 
 /** ActiveXObject 构造函数 */
 declare function ActiveXObject(progid: string): any;
-
-/** 全局变量声明 */
-declare var COMComponents: typeof COMComponents;

@@ -89,13 +89,21 @@ if (path) {
 3. 更新 AGENTS.md 的「COM 帮助函数」表格
 4. 各 app 根据需要引用对应的 COM 组件文件
 
-## COM 组件文件
+## COM 对象（$COM）
+
+| 文件 | 全局变量 | 说明 |
+|------|----------|------|
+| `com/shell.js` | `$COM.shell` | WScript.Shell |
+| `com/fso.js` | `$COM.fso` | FileSystemObject |
+| `com/shell-app.js` | `$COM.shellApp` | Shell.Application |
+
+## 辅助函数（COMComponents）
 
 | 文件 | 说明 |
 |------|------|
-| `com/shell.js` | WScript.Shell：命令执行、注册表、环境变量 |
-| `com/fso.js` | FileSystemObject：文件/文件夹操作 |
-| `com/shell-app.js` | Shell.Application：文件夹浏览对话框 |
+| `com/command.js` | 命令执行、注册表读写、环境变量 |
+| `com/file.js` | 文件/文件夹操作 |
+| `com/dialog.js` | 文件夹浏览对话框 |
 | `com/json.js` | JSON 文件读写 |
 
 ## COM 接口参考
