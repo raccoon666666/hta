@@ -79,8 +79,21 @@ COMComponents.openTextFile = function(path, mode, create) {
 
 COMComponents.browseForFolder = function(title, root) {
     var shellApp = COMComponents.getShellApp();
-    var folder = shellApp.BrowseForFolder(0, title || "选择文件夹", root || 0, 0);
-    return folder ? folder.Self.Path : null;
+    var flags = 0;
+    var rootFolder = 0;
+    if (typeof root === 'number') {
+        rootFolder = root;
+    } else if (typeof root === 'string' && root) {
+        try {
+            var ns = shellApp.NameSpace(root);
+            if (ns) rootFolder = root;
+        } catch(e) {}
+    }
+    var dlg = shellApp.BrowseForFolder(0, title || "选择文件夹", flags, rootFolder);
+    if (dlg) {
+        return dlg.Self.Path;
+    }
+    return null;
 };
 
 COMComponents.runCmdSync = function(cmd, cwd) {

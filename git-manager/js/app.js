@@ -85,22 +85,35 @@ new Vue({
         getDataPath: function() {
             return COMComponents.getBasePath().replace(/\\[^\\]+$/, "") + "\\data\\git-manager.json";
         },
+        loadData: function() {
+            var data = COMComponents.readJsonFile(this.getDataPath()) || {};
+            this.recentRepos = data.recentRepos || [];
+            this.lastBrowsePath = data.lastBrowsePath || '';
+        },
+        saveData: function() {
+            COMComponents.writeJsonFile(this.getDataPath(), {
+                recentRepos: this.recentRepos,
+                lastBrowsePath: this.lastBrowsePath
+            });
+        },
         loadRecentRepos: function() {
-            var data = COMComponents.readJsonFile(this.getDataPath());
-            this.recentRepos = (data && data.recentRepos) ? data.recentRepos : [];
+            this.loadData();
         },
         saveRecentRepo: function(repo) {
             var list = this.recentRepos.filter(function(r) { return r !== repo; });
             list.unshift(repo);
             if (list.length > 10) list = list.slice(0, 10);
             this.recentRepos = list;
-            COMComponents.writeJsonFile(this.getDataPath(), { recentRepos: list });
+            this.saveData();
         },
         browseRepo: function() {
             this.showRepoMenu = false;
             try {
-                var path = COMComponents.browseForFolder("选择Git仓库目录");
+                var rootPath = this.lastBrowsePath || '';
+                var path = COMComponents.browseForFolder("选择Git仓库目录", rootPath);
                 if (path) {
+                    this.lastBrowsePath = path;
+                    this.saveData();
                     log.info('选择目录: {}', path);
                     if (COMComponents.folderExists(path + "\\.git")) {
                         this.openRepo(path);
