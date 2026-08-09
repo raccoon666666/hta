@@ -89,6 +89,7 @@ project-root/
 - 使用 `var`，禁止 `let`/`const`/`class`/`箭头函数`/`template literal`/`for...of`
 - 不支持 `WScript` 对象（如 `WScript.Sleep`）
 - 禁止直接使用 `new ActiveXObject()`，必须通过 `$COM` 获取
+- **每个函数必须写注释**：说明函数作用和参数含义，不需要写类型（类型在 .d.ts 中表达）
 
 ### 类型定义
 - 每个 app 的 JS 必须在 app 内的 `types/` 创建对应的 `.d.ts`
