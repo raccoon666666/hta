@@ -1,5 +1,11 @@
 ﻿/**
  * $COM 全局对象类型定义
+ *
+ * 设计原则：
+ * 1. COM 对象直接挂载（shell/fso/shellApp）
+ * 2. 辅助函数按职责分组到子对象（cmd/reg/env/file/json/dialog）
+ * 3. 函数名在命名空间内保持简洁，不重复父对象语义
+ * 4. 通过 .d.ts 提示参数类型，不在参数名中编码类型信息
  */
 
 declare namespace $COM {
@@ -7,6 +13,14 @@ declare namespace $COM {
     const shell: WScriptShell;
     const fso: FileSystemObject;
     const shellApp: ShellApplication;
+
+    // ========== 子模块 ==========
+    const cmd: CmdModule;
+    const reg: RegModule;
+    const env: EnvModule;
+    const file: FileModule;
+    const json: JsonModule;
+    const dialog: DialogModule;
 
     // ========== WScript.Shell 接口 ==========
     interface WScriptShell {
@@ -87,21 +101,38 @@ declare namespace $COM {
         moveFirst(): void;
     }
 
-    // ========== 辅助函数 ==========
-    function runCmd(cmd: string, cwd?: string): WshExec;
-    function runCmdSync(cmd: string, cwd?: string): string;
-    function readReg(path: string): string | number;
-    function writeReg(path: string, value: string | number, type?: string): void;
-    function getEnvVars(type?: string): EnvironmentObject;
-    function folderExists(path: string): boolean;
-    function fileExists(path: string): boolean;
-    function createFolder(path: string): string;
-    function getParentFolder(path: string): string;
-    function getBasePath(): string;
-    function openTextFile(path: string, mode?: number, create?: boolean): TextStream;
-    function browseForFolder(title?: string, root?: any): string | null;
-    function readJsonFile(filePath: string): any;
-    function writeJsonFile(filePath: string, data: any): boolean;
+    // ========== 子模块接口 ==========
+    interface CmdModule {
+        run(cmd: string, cwd?: string): WshExec;
+        runSync(cmd: string, cwd?: string): string;
+    }
+
+    interface RegModule {
+        read(path: string): string | number;
+        write(path: string, value: string | number, type?: string): void;
+    }
+
+    interface EnvModule {
+        get(type?: string): EnvironmentObject;
+    }
+
+    interface FileModule {
+        exists(path: string): boolean;
+        folderExists(path: string): boolean;
+        create(path: string): string;
+        parent(path: string): string;
+        basePath(): string;
+        open(path: string, mode?: number, create?: boolean): TextStream;
+    }
+
+    interface JsonModule {
+        read(path: string): any;
+        write(path: string, data: any): boolean;
+    }
+
+    interface DialogModule {
+        browseForFolder(title?: string, root?: any): string | null;
+    }
 }
 
 /** WScript.Shell COM 对象 */

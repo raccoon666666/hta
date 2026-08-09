@@ -21,14 +21,15 @@ project-root/
     types/common.d.ts    # 公共组件类型定义
     types/promise.d.ts   # Promise 类型定义
   com/                   # COM 组件
-    shell.js             # WScript.Shell → $COM.shell
-    fso.js               # FileSystemObject → $COM.fso
-    shell-app.js         # Shell.Application → $COM.shellApp
-    command.js           # 命令/注册表辅助函数
-    file.js              # 文件操作辅助函数
-    dialog.js            # 对话框辅助函数
-    json.js              # JSON 文件辅助函数
-    types/com.d.ts       # $COM 全局对象 + 基础类型
+    shell.js             # $COM.shell
+    fso.js               # $COM.fso
+    shell-app.js         # $COM.shellApp
+    command.js           # $COM.cmd { run, runSync }
+    registry.js          # $COM.reg { read, write } + $COM.env { get }
+    file.js              # $COM.file { exists, folderExists, create, parent, basePath, open }
+    json.js              # $COM.json { read, write }
+    dialog.js            # $COM.dialog { browseForFolder }
+    types/com.d.ts       # $COM 统一类型定义
     types/shell.d.ts     # Shell 接口
     types/fso.d.ts       # FSO 接口
     types/shell-app.d.ts # Shell.Application 接口
@@ -55,10 +56,11 @@ project-root/
 ../com/shell.js           # $COM.shell (WScript.Shell)
 ../com/fso.js             # $COM.fso (FileSystemObject)
 ../com/shell-app.js       # $COM.shellApp (Shell.Application)
-../com/command.js         # $COM 命令/注册表辅助函数
-../com/file.js            # $COM 文件操作辅助函数
-../com/dialog.js          # $COM 对话框辅助函数
-../com/json.js            # $COM JSON 文件辅助函数
+../com/command.js         # $COM.cmd { run, runSync }
+../com/registry.js        # $COM.reg { read, write } + $COM.env { get }
+../com/file.js            # $COM.file { exists, folderExists, create, parent, basePath, open }
+../com/json.js            # $COM.json { read, write }
+../com/dialog.js          # $COM.dialog { browseForFolder }
 ../components/js/common.js # Mixin + 工具函数
 ../components/css/common.css # 公共样式
 ```
@@ -88,6 +90,14 @@ project-root/
 - `$COM.log.setLevel('INFO')` — 设置全局最小级别
 - `log.info('用户 {} 登录', name)` — 占位符语法
 - 详细用法见 [docs/component-library.md](docs/component-library.md)
+
+### 设计原则
+
+1. **COM 对象直接挂载**：`$COM.shell`、`$COM.fso`、`$COM.shellApp` 直接是 COM 实例
+2. **辅助函数分组到子对象**：按职责划分为 `cmd`、`reg`、`env`、`file`、`json`、`dialog`
+3. **函数名在命名空间内简洁**：不重复父对象语义，如 `$COM.json.read` 而非 `$COM.readJsonFile`
+4. **类型信息通过 .d.ts 表达**：不在参数名中编码类型，用 TypeScript 接口声明参数和返回值类型
+5. **单一入口**：所有 COM 操作通过 `$COM` 访问，不散落全局函数
 
 ## 工具脚本
 

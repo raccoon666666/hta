@@ -14,38 +14,38 @@
 
 | 函数 | 说明 | 返回值 |
 |------|------|--------|
-| `$COM.getShell()` | 获取 WScript.Shell 实例 | `WScriptShell` |
-| `$COM.getEnvVars(type)` | 获取环境变量集合（"User"/"System"） | `EnvironmentObject` |
-| `$COM.runCmd(cmd, cwd)` | 执行命令（异步） | `WshExec` |
-| `$COM.runCmdSync(cmd, cwd)` | 执行命令（同步，等待完成） | `string` |
-| `$COM.readReg(path)` | 读取注册表 | `string\|number` |
-| `$COM.writeReg(path, value, type?)` | 写入注册表 | `void` |
+| `$COM.shell` | 获取 WScript.Shell 实例 | `WScriptShell` |
+| `$COM.env.get(type)` | 获取环境变量集合（"User"/"System"） | `EnvironmentObject` |
+| `$COM.cmd.run(cmd, cwd)` | 执行命令（异步） | `WshExec` |
+| `$COM.cmd.runSync(cmd, cwd)` | 执行命令（同步，等待完成） | `string` |
+| `$COM.reg.read(path)` | 读取注册表 | `string\|number` |
+| `$COM.reg.write(path, value, type?)` | 写入注册表 | `void` |
 
 ### FileSystemObject 相关
 
 | 函数 | 说明 | 返回值 |
 |------|------|--------|
-| `$COM.getFSO()` | 获取 Scripting.FileSystemObject 实例 | `FileSystemObject` |
-| `$COM.folderExists(path)` | 判断文件夹是否存在 | `boolean` |
-| `$COM.fileExists(path)` | 判断文件是否存在 | `boolean` |
-| `$COM.createFolder(path)` | 创建文件夹（如果不存在） | `string` |
-| `$COM.getParentFolder(path)` | 获取父文件夹路径 | `string` |
-| `$COM.getBasePath()` | 获取当前 HTA 的文件基础路径 | `string` |
-| `$COM.openTextFile(path, mode?, create?)` | 打开文本文件 | `TextStream` |
+| `$COM.fso` | 获取 Scripting.FileSystemObject 实例 | `FileSystemObject` |
+| `$COM.file.folderExists(path)` | 判断文件夹是否存在 | `boolean` |
+| `$COM.file.exists(path)` | 判断文件是否存在 | `boolean` |
+| `$COM.file.create(path)` | 创建文件夹（如果不存在） | `string` |
+| `$COM.file.parent(path)` | 获取父文件夹路径 | `string` |
+| `$COM.file.basePath()` | 获取当前 HTA 的文件基础路径 | `string` |
+| `$COM.file.open(path, mode?, create?)` | 打开文本文件 | `TextStream` |
 
 ### Shell.Application 相关
 
 | 函数 | 说明 | 返回值 |
 |------|------|--------|
-| `$COM.getShellApp()` | 获取 Shell.Application 实例 | `ShellApplication` |
-| `$COM.browseForFolder(title?, root?)` | 浏览文件夹对话框 | `string\|null` |
+| `$COM.shellApp` | 获取 Shell.Application 实例 | `ShellApplication` |
+| `$COM.dialog.browseForFolder(title?, root?)` | 浏览文件夹对话框 | `string\|null` |
 
 ## 使用示例
 
 ### 执行命令并等待完成
 
 ```javascript
-var output = $COM.runCmdSync('git status', repoPath);
+var output = $COM.cmd.runSync('git status', repoPath);
 if (output.indexOf('error') === -1) {
     // 成功
 }
@@ -55,28 +55,28 @@ if (output.indexOf('error') === -1) {
 
 ```javascript
 // 读取
-var repos = $COM.readReg('HKCU\\Software\\GitManager\\RecentRepos');
+var repos = $COM.reg.read('HKCU\\Software\\GitManager\\RecentRepos');
 
 // 写入
-$COM.writeReg('HKCU\\Software\\GitManager\\RecentRepos', value);
+$COM.reg.write('HKCU\\Software\\GitManager\\RecentRepos', value);
 ```
 
 ### 文件操作
 
 ```javascript
-if ($COM.folderExists(path)) {
-    var fso = $COM.getFSO();
+if ($COM.file.folderExists(path)) {
+    var fso = $COM.fso;
     // ...
 }
 
 // 创建目录（如果不存在）
-$COM.createFolder('C:\\temp\\myapp');
+$COM.file.create('C:\\temp\\myapp');
 ```
 
 ### 浏览文件夹
 
 ```javascript
-var path = $COM.browseForFolder('选择Git仓库目录');
+var path = $COM.dialog.browseForFolder('选择Git仓库目录');
 if (path) {
     // 用户选择了文件夹
 }
