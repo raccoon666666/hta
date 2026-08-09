@@ -101,13 +101,16 @@ new Vue({
             try {
                 var path = COMComponents.browseForFolder("选择Git仓库目录");
                 if (path) {
+                    log.info('选择目录: {}', path);
                     if (COMComponents.folderExists(path + "\\.git")) {
                         this.openRepo(path);
                     } else {
+                        log.warn('不是Git仓库: {}', path);
                         this.showToast("所选目录不是Git仓库");
                     }
                 }
             } catch(e) {
+                log.debug('取消选择目录');
                 this.showToast("取消选择");
             }
         },
